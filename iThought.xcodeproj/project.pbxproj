@@ -1,0 +1,532 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2035DBED2697235400F7D2B5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2035DBEC2697235400F7D2B5 /* AppDelegate.swift */; };
+		2035DBEF2697235400F7D2B5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2035DBEE2697235400F7D2B5 /* SceneDelegate.swift */; };
+		2035DBF12697235400F7D2B5 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2035DBF02697235400F7D2B5 /* LoginViewController.swift */; };
+		2035DBF42697235400F7D2B5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2035DBF22697235400F7D2B5 /* Main.storyboard */; };
+		2035DBF62697235500F7D2B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2035DBF52697235500F7D2B5 /* Assets.xcassets */; };
+		2035DBF92697235500F7D2B5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2035DBF72697235500F7D2B5 /* LaunchScreen.storyboard */; };
+		2035DC01269723FA00F7D2B5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2035DC00269723FA00F7D2B5 /* GoogleService-Info.plist */; };
+		206DD3EC269AF5A6006F97CC /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206DD3EB269AF5A6006F97CC /* SignUpViewController.swift */; };
+		206DD3EE269B3841006F97CC /* CompleteProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206DD3ED269B3841006F97CC /* CompleteProfileViewController.swift */; };
+		206DD3F0269B7C94006F97CC /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206DD3EF269B7C94006F97CC /* Extensions.swift */; };
+		206DD3F2269B86BB006F97CC /* iThoughtPasswordField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206DD3F1269B86BB006F97CC /* iThoughtPasswordField.swift */; };
+		206FB176269CA493001991F0 /* iThoughtTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206FB175269CA493001991F0 /* iThoughtTextView.swift */; };
+		206FB17826A2EFF1001991F0 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206FB17726A2EFF1001991F0 /* WelcomeViewController.swift */; };
+		206FB17A26A41D99001991F0 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206FB17926A41D99001991F0 /* HomeViewController.swift */; };
+		206FB17C26A41DA9001991F0 /* NotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206FB17B26A41DA9001991F0 /* NotificationsViewController.swift */; };
+		206FB17E26A41DE6001991F0 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206FB17D26A41DE6001991F0 /* ProfileViewController.swift */; };
+		206FB18026A427BD001991F0 /* HNPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206FB17F26A427BD001991F0 /* HNPViewController.swift */; };
+		2071A34926B9D770004F7932 /* iThoughtPostsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2071A34826B9D770004F7932 /* iThoughtPostsCell.swift */; };
+		208ECDF42699E23800FD994C /* iThoughtTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208ECDF32699E23800FD994C /* iThoughtTextField.swift */; };
+		208ECDF6269A155400FD994C /* iThoughtButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208ECDF5269A155400FD994C /* iThoughtButton.swift */; };
+		20B4307326B69084007C0EB5 /* ComposePostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B4307226B69084007C0EB5 /* ComposePostViewController.swift */; };
+		20CD47A926AB841100196410 /* iThoughtCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CD47A826AB841100196410 /* iThoughtCollectionViewCell.swift */; };
+		20CD47AB26AD440900196410 /* iThoughtSettingsButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CD47AA26AD440900196410 /* iThoughtSettingsButtons.swift */; };
+		20CD47AD26AD74CF00196410 /* BookmarksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CD47AC26AD74CF00196410 /* BookmarksViewController.swift */; };
+		20F73AF326A8633A007C9471 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F73AF226A8633A007C9471 /* DatabaseManager.swift */; };
+		20F73AF526A8BB5C007C9471 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F73AF426A8BB5C007C9471 /* SettingsViewController.swift */; };
+		20F73AF726A97497007C9471 /* ChooseImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F73AF626A97497007C9471 /* ChooseImageViewController.swift */; };
+		9AC9C56A013B09B7F4468FED /* Pods_iThought.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0154B2F90967A7170CB4AA1D /* Pods_iThought.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0154B2F90967A7170CB4AA1D /* Pods_iThought.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iThought.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2035DBE92697235400F7D2B5 /* iThought.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iThought.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2035DBEC2697235400F7D2B5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		2035DBEE2697235400F7D2B5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		2035DBF02697235400F7D2B5 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		2035DBF32697235400F7D2B5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		2035DBF52697235500F7D2B5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2035DBF82697235500F7D2B5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		2035DBFA2697235500F7D2B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2035DC00269723FA00F7D2B5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		206DD3EB269AF5A6006F97CC /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
+		206DD3ED269B3841006F97CC /* CompleteProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteProfileViewController.swift; sourceTree = "<group>"; };
+		206DD3EF269B7C94006F97CC /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		206DD3F1269B86BB006F97CC /* iThoughtPasswordField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iThoughtPasswordField.swift; sourceTree = "<group>"; };
+		206FB175269CA493001991F0 /* iThoughtTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iThoughtTextView.swift; sourceTree = "<group>"; };
+		206FB17726A2EFF1001991F0 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
+		206FB17926A41D99001991F0 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		206FB17B26A41DA9001991F0 /* NotificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsViewController.swift; sourceTree = "<group>"; };
+		206FB17D26A41DE6001991F0 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		206FB17F26A427BD001991F0 /* HNPViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNPViewController.swift; sourceTree = "<group>"; };
+		2071A34826B9D770004F7932 /* iThoughtPostsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iThoughtPostsCell.swift; sourceTree = "<group>"; };
+		208ECDF32699E23800FD994C /* iThoughtTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iThoughtTextField.swift; sourceTree = "<group>"; };
+		208ECDF5269A155400FD994C /* iThoughtButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iThoughtButton.swift; sourceTree = "<group>"; };
+		20B4307226B69084007C0EB5 /* ComposePostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposePostViewController.swift; sourceTree = "<group>"; };
+		20CD47A826AB841100196410 /* iThoughtCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iThoughtCollectionViewCell.swift; sourceTree = "<group>"; };
+		20CD47AA26AD440900196410 /* iThoughtSettingsButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iThoughtSettingsButtons.swift; sourceTree = "<group>"; };
+		20CD47AC26AD74CF00196410 /* BookmarksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarksViewController.swift; sourceTree = "<group>"; };
+		20F73AF226A8633A007C9471 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		20F73AF426A8BB5C007C9471 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		20F73AF626A97497007C9471 /* ChooseImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseImageViewController.swift; sourceTree = "<group>"; };
+		448D2FAA0AC35A8FC510C1B9 /* Pods-iThought.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iThought.release.xcconfig"; path = "Target Support Files/Pods-iThought/Pods-iThought.release.xcconfig"; sourceTree = "<group>"; };
+		A0FCB3E8EA49B8363C09996C /* Pods-iThought.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iThought.debug.xcconfig"; path = "Target Support Files/Pods-iThought/Pods-iThought.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2035DBE62697235400F7D2B5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9AC9C56A013B09B7F4468FED /* Pods_iThought.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2035DBE02697235400F7D2B5 = {
+			isa = PBXGroup;
+			children = (
+				2035DBEB2697235400F7D2B5 /* iThought */,
+				2035DBEA2697235400F7D2B5 /* Products */,
+				F0BD4E0209E9F3923F1F2155 /* Pods */,
+				A123425910DCA9D327AD9AD7 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		2035DBEA2697235400F7D2B5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2035DBE92697235400F7D2B5 /* iThought.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2035DBEB2697235400F7D2B5 /* iThought */ = {
+			isa = PBXGroup;
+			children = (
+				2035DBEC2697235400F7D2B5 /* AppDelegate.swift */,
+				2035DBEE2697235400F7D2B5 /* SceneDelegate.swift */,
+				206DD3EF269B7C94006F97CC /* Extensions.swift */,
+				208ECDF9269A377700FD994C /* Model */,
+				208ECDF7269A373300FD994C /* View */,
+				208ECDF8269A373F00FD994C /* Controller */,
+				2035DBF22697235400F7D2B5 /* Main.storyboard */,
+				2035DBF52697235500F7D2B5 /* Assets.xcassets */,
+				2035DBF72697235500F7D2B5 /* LaunchScreen.storyboard */,
+				2035DC00269723FA00F7D2B5 /* GoogleService-Info.plist */,
+				2035DBFA2697235500F7D2B5 /* Info.plist */,
+			);
+			path = iThought;
+			sourceTree = "<group>";
+		};
+		206FB18126A42A27001991F0 /* TabBarControllers */ = {
+			isa = PBXGroup;
+			children = (
+				206FB17926A41D99001991F0 /* HomeViewController.swift */,
+				206FB17B26A41DA9001991F0 /* NotificationsViewController.swift */,
+				20CD47AC26AD74CF00196410 /* BookmarksViewController.swift */,
+				206FB17D26A41DE6001991F0 /* ProfileViewController.swift */,
+			);
+			path = TabBarControllers;
+			sourceTree = "<group>";
+		};
+		208ECDF7269A373300FD994C /* View */ = {
+			isa = PBXGroup;
+			children = (
+				208ECDF32699E23800FD994C /* iThoughtTextField.swift */,
+				208ECDF5269A155400FD994C /* iThoughtButton.swift */,
+				206DD3F1269B86BB006F97CC /* iThoughtPasswordField.swift */,
+				206FB175269CA493001991F0 /* iThoughtTextView.swift */,
+				20CD47A826AB841100196410 /* iThoughtCollectionViewCell.swift */,
+				20CD47AA26AD440900196410 /* iThoughtSettingsButtons.swift */,
+				2071A34826B9D770004F7932 /* iThoughtPostsCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		208ECDF8269A373F00FD994C /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				206FB17726A2EFF1001991F0 /* WelcomeViewController.swift */,
+				2035DBF02697235400F7D2B5 /* LoginViewController.swift */,
+				206DD3EB269AF5A6006F97CC /* SignUpViewController.swift */,
+				206DD3ED269B3841006F97CC /* CompleteProfileViewController.swift */,
+				20F73AF626A97497007C9471 /* ChooseImageViewController.swift */,
+				206FB17F26A427BD001991F0 /* HNPViewController.swift */,
+				206FB18126A42A27001991F0 /* TabBarControllers */,
+				20F73AF426A8BB5C007C9471 /* SettingsViewController.swift */,
+				20B4307226B69084007C0EB5 /* ComposePostViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		208ECDF9269A377700FD994C /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				20F73AF226A8633A007C9471 /* DatabaseManager.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		A123425910DCA9D327AD9AD7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0154B2F90967A7170CB4AA1D /* Pods_iThought.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F0BD4E0209E9F3923F1F2155 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A0FCB3E8EA49B8363C09996C /* Pods-iThought.debug.xcconfig */,
+				448D2FAA0AC35A8FC510C1B9 /* Pods-iThought.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2035DBE82697235400F7D2B5 /* iThought */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2035DBFD2697235500F7D2B5 /* Build configuration list for PBXNativeTarget "iThought" */;
+			buildPhases = (
+				8F42CAE29F5F53F673751FB6 /* [CP] Check Pods Manifest.lock */,
+				2035DBE52697235400F7D2B5 /* Sources */,
+				2035DBE62697235400F7D2B5 /* Frameworks */,
+				2035DBE72697235400F7D2B5 /* Resources */,
+				B4877C9340E110FC3C3F363C /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iThought;
+			productName = iThought;
+			productReference = 2035DBE92697235400F7D2B5 /* iThought.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2035DBE12697235400F7D2B5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1250;
+				LastUpgradeCheck = 1250;
+				TargetAttributes = {
+					2035DBE82697235400F7D2B5 = {
+						CreatedOnToolsVersion = 12.5.1;
+					};
+				};
+			};
+			buildConfigurationList = 2035DBE42697235400F7D2B5 /* Build configuration list for PBXProject "iThought" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2035DBE02697235400F7D2B5;
+			productRefGroup = 2035DBEA2697235400F7D2B5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2035DBE82697235400F7D2B5 /* iThought */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2035DBE72697235400F7D2B5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2035DBF92697235500F7D2B5 /* LaunchScreen.storyboard in Resources */,
+				2035DC01269723FA00F7D2B5 /* GoogleService-Info.plist in Resources */,
+				2035DBF62697235500F7D2B5 /* Assets.xcassets in Resources */,
+				2035DBF42697235400F7D2B5 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8F42CAE29F5F53F673751FB6 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-iThought-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B4877C9340E110FC3C3F363C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iThought/Pods-iThought-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iThought/Pods-iThought-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iThought/Pods-iThought-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2035DBE52697235400F7D2B5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20CD47AD26AD74CF00196410 /* BookmarksViewController.swift in Sources */,
+				20CD47AB26AD440900196410 /* iThoughtSettingsButtons.swift in Sources */,
+				20F73AF326A8633A007C9471 /* DatabaseManager.swift in Sources */,
+				206DD3F0269B7C94006F97CC /* Extensions.swift in Sources */,
+				208ECDF42699E23800FD994C /* iThoughtTextField.swift in Sources */,
+				2071A34926B9D770004F7932 /* iThoughtPostsCell.swift in Sources */,
+				206DD3EC269AF5A6006F97CC /* SignUpViewController.swift in Sources */,
+				206FB176269CA493001991F0 /* iThoughtTextView.swift in Sources */,
+				20F73AF726A97497007C9471 /* ChooseImageViewController.swift in Sources */,
+				206FB17C26A41DA9001991F0 /* NotificationsViewController.swift in Sources */,
+				2035DBF12697235400F7D2B5 /* LoginViewController.swift in Sources */,
+				206FB18026A427BD001991F0 /* HNPViewController.swift in Sources */,
+				208ECDF6269A155400FD994C /* iThoughtButton.swift in Sources */,
+				2035DBED2697235400F7D2B5 /* AppDelegate.swift in Sources */,
+				2035DBEF2697235400F7D2B5 /* SceneDelegate.swift in Sources */,
+				206FB17826A2EFF1001991F0 /* WelcomeViewController.swift in Sources */,
+				20F73AF526A8BB5C007C9471 /* SettingsViewController.swift in Sources */,
+				206DD3EE269B3841006F97CC /* CompleteProfileViewController.swift in Sources */,
+				206FB17E26A41DE6001991F0 /* ProfileViewController.swift in Sources */,
+				206FB17A26A41D99001991F0 /* HomeViewController.swift in Sources */,
+				20B4307326B69084007C0EB5 /* ComposePostViewController.swift in Sources */,
+				20CD47A926AB841100196410 /* iThoughtCollectionViewCell.swift in Sources */,
+				206DD3F2269B86BB006F97CC /* iThoughtPasswordField.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		2035DBF22697235400F7D2B5 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2035DBF32697235400F7D2B5 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		2035DBF72697235500F7D2B5 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2035DBF82697235500F7D2B5 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		2035DBFB2697235500F7D2B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		2035DBFC2697235500F7D2B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		2035DBFE2697235500F7D2B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A0FCB3E8EA49B8363C09996C /* Pods-iThought.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = BJUL9DNG5D;
+				INFOPLIST_FILE = iThought/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.MohamedKAttar.iThought;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		2035DBFF2697235500F7D2B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 448D2FAA0AC35A8FC510C1B9 /* Pods-iThought.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = BJUL9DNG5D;
+				INFOPLIST_FILE = iThought/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.MohamedKAttar.iThought;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2035DBE42697235400F7D2B5 /* Build configuration list for PBXProject "iThought" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2035DBFB2697235500F7D2B5 /* Debug */,
+				2035DBFC2697235500F7D2B5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2035DBFD2697235500F7D2B5 /* Build configuration list for PBXNativeTarget "iThought" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2035DBFE2697235500F7D2B5 /* Debug */,
+				2035DBFF2697235500F7D2B5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2035DBE12697235400F7D2B5 /* Project object */;
+}
