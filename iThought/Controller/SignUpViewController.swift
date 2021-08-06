@@ -122,6 +122,7 @@ class SignUpViewController: UIViewController {
         loginInstead.textColor = .white
         
         passwordChecker.text = "Make sure your password has at least 6 characters and includes at least a capital letter (A-Z), a digit (0-9) and a special character."
+        passwordChecker.font = UIFont.systemFont(ofSize: 15)
         passwordChecker.textColor = .systemRed
         passwordChecker.isHidden = true
         passwordChecker.numberOfLines = 0

@@ -18,6 +18,11 @@ class HomeViewController: UIViewController {
     let regionCode = Locale.current.regionCode
     
     let defaults = UserDefaults.standard
+    
+    let notFoundImage = UIImageView(image: UIImage(named: "no_posts"))
+    let notFoundLabel = UILabel()
+    
+    let options = UIAlertController(title: "Choose an option", message: nil, preferredStyle: .actionSheet) // Delete later
 
     
     var postsArray = [iThoughtPost]()
@@ -35,7 +40,7 @@ class HomeViewController: UIViewController {
         }
         configureTableView()
         setConstraints()
-
+        configNotFoundViews()
     }
     
     
@@ -52,6 +57,33 @@ class HomeViewController: UIViewController {
 //        }
 //    }
 //
+    
+    func configNotFoundViews() {
+        view.addSubview(notFoundImage)
+        view.addSubview(notFoundLabel)
+        
+        NSLayoutConstraint.activate([
+            notFoundImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            notFoundImage.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            notFoundImage.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            notFoundImage.heightAnchor.constraint(equalTo: notFoundImage.widthAnchor, multiplier: 1/1.333333),
+            
+            notFoundLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            notFoundLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            notFoundLabel.topAnchor.constraint(equalTo: notFoundImage.bottomAnchor, constant: 10)
+        ])
+        notFoundImage.translatesAutoresizingMaskIntoConstraints = false
+        notFoundLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        notFoundImage.isHidden = true
+        notFoundLabel.isHidden = true
+        
+        notFoundLabel.text = "We couldn't find any posts in our database in your region today, be the first to post! and share the app with people on social media and between your friends!"
+        notFoundLabel.numberOfLines = 0
+        notFoundLabel.textAlignment = .center
+        notFoundLabel.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        notFoundLabel.textColor = .systemGray
+    }
     func configureTableView() {
         
         tableView.register(iThoughtPostsCell.self, forCellReuseIdentifier: iThoughtPostsCell.id)
@@ -92,36 +124,44 @@ class HomeViewController: UIViewController {
             .whereField("region", isEqualTo: regionCode!)
             .whereField("endAt", isGreaterThan: now)
             .addSnapshotListener { snapshot, error in
-            if let e = error {
-                print("ERROR: \(e.localizedDescription)")
-            } else {
-                self.postsArray.removeAll()
-                if let snapshotDoc = snapshot?.documents {
-                    for document in snapshotDoc {
-                        
-                        let post = iThoughtPost()
-
-                        post.postID = document.documentID
-                        post.anonymous = document.data()["anonymous"] as? Bool
-                        post.createdAt = document.data()["createdAt"] as? Timestamp
-                        post.disableReplies = document.data()["disableReplies"] as? Bool
-                        post.likes = document.data()["likes"] as? Int
-                        post.picture = document.data()["picture"] as? String
-                        post.senstive = document.data()["sensitive"] as? Bool
-                        post.text = document.data()["text"] as? String
-                        post.userID = document.data()["uid"] as? String
-                        post.username = document.data()["username"] as? String
-
-                        self.postsArray.append(post)
-
+                if let e = error {
+                    print("ERROR: \(e.localizedDescription)")
+                } else {
+                    self.postsArray.removeAll()
+                    if let snapshotDoc = snapshot?.documents {
+                        for document in snapshotDoc {
+                            
+                            let post = iThoughtPost()
+                            
+                            post.postID = document.documentID
+                            post.anonymous = document.data()["anonymous"] as? Bool
+                            post.createdAt = document.data()["createdAt"] as? Timestamp
+                            post.disableReplies = document.data()["disableReplies"] as? Bool
+                            post.likes = document.data()["likes"] as? Int
+                            post.picture = document.data()["picture"] as? String
+                            post.senstive = document.data()["sensitive"] as? Bool
+                            post.text = document.data()["text"] as? String
+                            post.userID = document.data()["uid"] as? String
+                            post.username = document.data()["username"] as? String
+                            
+                            self.postsArray.append(post)
+                            
+                        }
+                    }
+                    if self.postsArray.isEmpty {
+                        self.notFoundImage.isHidden = false
+                        self.notFoundLabel.isHidden = false
+                    } else {
+                        self.notFoundLabel.isHidden = true
+                        self.notFoundImage.isHidden = true
                     }
                 }
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    
+                }
+                completion(true)
             }
-            DispatchQueue.main.async {
-                  self.tableView.reloadData()
-            }
-            completion(true)
-        }
 //        tableView.reloadData()
         
 //        .getDocuments() { (querySnapshot, err) in
@@ -168,7 +208,7 @@ class HomeViewController: UIViewController {
         let refreshButton = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshTableView))
         navigationItem.rightBarButtonItems = [refreshButton, composeButton]
         navigationItem.rightBarButtonItem?.tintColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
-
+        configOptionsButton()
     }
     
     @objc func refreshTableView() {
@@ -261,4 +301,46 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     
+}
+
+
+extension HomeViewController {
+    
+    func configOptionsButton() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "command.square.fill"), style: .plain, target: self, action: #selector(optionsTapped))
+        navigationItem.leftBarButtonItem?.tintColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
+        options.addAction(UIAlertAction(title: "Delete Posts Over 24H", style: .destructive, handler: { ACTION in
+            self.db.collection("posts").whereField("endAt", isLessThanOrEqualTo: Date()).getDocuments { snapshot, error in
+                if let e = error {
+                    print(e.localizedDescription)
+                } else {
+                    if let snapshot = snapshot {
+                        for doc in snapshot.documents {
+                            self.db.collection("posts").document(doc.documentID).delete()
+                        }
+                    }
+                }
+            }
+        }))
+        options.addAction(UIAlertAction(title: "Delete all posts", style: .destructive, handler: { ACTION in
+            self.db.collection("posts").getDocuments { snapshot, error in
+                if let e = error {
+                    print(e.localizedDescription)
+                } else {
+                    if let snapshot = snapshot {
+                        for doc in snapshot.documents {
+                            self.db.collection("posts").document(doc.documentID).delete()
+                        }
+                    }
+                }
+            }
+        }))
+        options.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: { ACTION in
+            self.options.dismiss(animated: true, completion: nil)
+        }))
+    }
+    
+    @objc func optionsTapped() {
+        present(options, animated: true)
+    }
 }

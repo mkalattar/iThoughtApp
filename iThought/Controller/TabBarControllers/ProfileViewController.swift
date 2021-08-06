@@ -11,7 +11,7 @@ import Firebase
 
 class ProfileViewController: UIViewController {
     
-    let signOut = UIButton()
+//    let signOut = UIButton()
     let defaults = UserDefaults.standard
     let tableView = UITableView()
     var postsArray = [iThoughtPost]()
