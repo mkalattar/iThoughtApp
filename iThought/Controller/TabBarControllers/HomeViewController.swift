@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 import FirebaseFirestoreSwift
 import FirebaseFirestore
 
@@ -16,8 +17,7 @@ class HomeViewController: UIViewController {
     let db = Firestore.firestore()
     
     let regionCode = Locale.current.regionCode
-    
-    let defaults = UserDefaults.standard
+    let defaults   = UserDefaults.standard
     
     let notFoundImage = UIImageView(image: UIImage(named: "no_posts"))
     let notFoundLabel = UILabel()
@@ -78,11 +78,11 @@ class HomeViewController: UIViewController {
         notFoundImage.isHidden = true
         notFoundLabel.isHidden = true
         
-        notFoundLabel.text = "We couldn't find any posts in our database in your region today, be the first to post! and share the app with people on social media and between your friends!"
+        notFoundLabel.text          = "We couldn't find any posts in our database in your region today, be the first to post! and share the app with people on social media and between your friends!"
         notFoundLabel.numberOfLines = 0
         notFoundLabel.textAlignment = .center
-        notFoundLabel.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-        notFoundLabel.textColor = .systemGray
+        notFoundLabel.font          = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        notFoundLabel.textColor     = .systemGray
     }
     func configureTableView() {
         
@@ -92,7 +92,7 @@ class HomeViewController: UIViewController {
         tableView.estimatedRowHeight = 200
 
         
-        tableView.delegate = self
+        tableView.delegate   = self
         tableView.dataSource = self
     }
     
@@ -130,22 +130,20 @@ class HomeViewController: UIViewController {
                     self.postsArray.removeAll()
                     if let snapshotDoc = snapshot?.documents {
                         for document in snapshotDoc {
-                            
                             let post = iThoughtPost()
                             
-                            post.postID = document.documentID
-                            post.anonymous = document.data()["anonymous"] as? Bool
-                            post.createdAt = document.data()["createdAt"] as? Timestamp
+                            post.postID         = document.documentID
+                            post.anonymous      = document.data()["anonymous"]      as? Bool
+                            post.createdAt      = document.data()["createdAt"]      as? Timestamp
                             post.disableReplies = document.data()["disableReplies"] as? Bool
-                            post.likes = document.data()["likes"] as? Int
-                            post.picture = document.data()["picture"] as? String
-                            post.senstive = document.data()["sensitive"] as? Bool
-                            post.text = document.data()["text"] as? String
-                            post.userID = document.data()["uid"] as? String
-                            post.username = document.data()["username"] as? String
+                            post.likes          = document.data()["likes"]          as? Int
+                            post.picture        = document.data()["picture"]        as? String
+                            post.senstive       = document.data()["sensitive"]      as? Bool
+                            post.text           = document.data()["text"]           as? String
+                            post.userID         = document.data()["uid"]            as? String
+                            post.username       = document.data()["username"]       as? String
                             
                             self.postsArray.append(post)
-                            
                         }
                     }
                     if self.postsArray.isEmpty {
@@ -202,11 +200,12 @@ class HomeViewController: UIViewController {
     }
     
     func setupView() {
-        view.backgroundColor = UIColor(red: 47/255, green: 53/255, blue: 61/255, alpha: 1)
-        let composeButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(composePost))
+        view.backgroundColor    = UIColor(red: 47/255, green: 53/255, blue: 61/255, alpha: 1)
+        let composeButton       = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(composePost))
         composeButton.tintColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
-        let refreshButton = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshTableView))
-        navigationItem.rightBarButtonItems = [refreshButton, composeButton]
+        let refreshButton       = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshTableView))
+        
+        navigationItem.rightBarButtonItems           = [refreshButton, composeButton]
         navigationItem.rightBarButtonItem?.tintColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
         configOptionsButton()
     }
@@ -223,9 +222,7 @@ class HomeViewController: UIViewController {
     
     @objc func composePost() {
         let nav = UINavigationController(rootViewController: ComposePostViewController())
-        present(nav, animated: true) {
-//            self.tableView.reloadData()
-        }
+        present(nav, animated: true)
     }
 
 }
@@ -241,16 +238,16 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 
         let posts = postsArray[indexPath.row]
         cell.usernameLabel.text = (posts.anonymous! ? "Anonymous Post" : posts.username)
-        cell.userID = posts.userID
-        cell.postID = posts.postID
+        cell.userID             = posts.userID
+        cell.postID             = posts.postID
         
         cell.index = indexPath
         
-        let date = posts.createdAt!.dateValue()
+        let date     = posts.createdAt!.dateValue()
         let calendar = Calendar.current
         
-        let hour = calendar.component(.hour, from: date)
-        let minute = calendar.component(.minute, from: date)
+        let hour    = calendar.component(.hour, from: date)
+        let minute  = calendar.component(.minute, from: date)
         
         cell.timeLabel.text = "\(hour):\(minute)"
         cell.likeButton.setTitle(" \(posts.likes ?? 0)", for: .normal)
@@ -267,12 +264,43 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
         }
         
-        cell.userImage.image = UIImage(named: (posts.anonymous! ? "anonymous" : posts.picture ?? "loading") )
-        cell.postLabel.text = posts.text
+        cell.userImage.image    = UIImage(named: (posts.anonymous! ? "anonymous" : posts.picture ?? "loading") )
+        cell.postLabel.text     = posts.text
         
         cell.commentButton.isHidden = (posts.disableReplies!)
         
-        cell.buttonTapCallback = {
+        let reportPost = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let deletePost = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        reportPost.addAction(UIAlertAction(title: "Report this Post", style: .destructive, handler: { ACTION in
+            let docData: [String: Any] = [
+                "reported_postID":      posts.postID  ?? "null",
+                "reported_post_text":   posts.text    ?? "null",
+                "reported_userID":      posts.userID  ?? "null",
+                "reporter_userID":      Auth.auth().currentUser?.uid ?? "null"
+            ]
+            self.db.collection("reports").addDocument(data: docData)
+        }))
+        reportPost.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { ACTION in
+            self.dismiss(animated: true, completion: nil)
+        }))
+        
+        deletePost.addAction(UIAlertAction(title: "Delete your post?", style: .destructive, handler: { ACTION in
+            self.db.collection("posts").document(posts.postID!).delete()
+        }))
+        deletePost.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { UIAlertAction in
+            self.dismiss(animated: true, completion: nil)
+        }))
+        
+        cell.moreButtonTappedCallBack = {
+            if Auth.auth().currentUser?.uid == posts.userID {
+                self.present(deletePost, animated: true, completion: nil)
+            } else {
+                self.present(reportPost, animated: true, completion: nil)
+            }
+        }
+        
+        cell.likeButtonTappedCallBack = {
             
             var likedPosts = self.defaults.stringArray(forKey: "likedPosts")
             
@@ -307,8 +335,9 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 extension HomeViewController {
     
     func configOptionsButton() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "command.square.fill"), style: .plain, target: self, action: #selector(optionsTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "applelogo"), style: .plain, target: self, action: #selector(optionsTapped))
         navigationItem.leftBarButtonItem?.tintColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
+        
         options.addAction(UIAlertAction(title: "Delete Posts Over 24H", style: .destructive, handler: { ACTION in
             self.db.collection("posts").whereField("endAt", isLessThanOrEqualTo: Date()).getDocuments { snapshot, error in
                 if let e = error {
@@ -335,7 +364,7 @@ extension HomeViewController {
                 }
             }
         }))
-        options.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: { ACTION in
+        options.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: { ACTION in
             self.options.dismiss(animated: true, completion: nil)
         }))
     }

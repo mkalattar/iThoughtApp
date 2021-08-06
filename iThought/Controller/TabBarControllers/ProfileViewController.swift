@@ -264,11 +264,13 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: iThoughtPostsCell.id, for: indexPath) as! iThoughtPostsCell
-        
+                
         let posts = postsArray[indexPath.row]
         cell.usernameLabel.text = (posts.anonymous! ? "Anonymous Post" : posts.username)
         cell.userID = posts.userID
         cell.postID = posts.postID
+        
+        cell.index = indexPath
         
         let date = posts.createdAt!.dateValue()
         let calendar = Calendar.current
@@ -278,12 +280,72 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         
         cell.timeLabel.text = "\(hour):\(minute)"
         cell.likeButton.setTitle(" \(posts.likes ?? 0)", for: .normal)
+        
+        let likedPosts = self.defaults.stringArray(forKey: "likedPosts")
+        
+        if let liked = likedPosts {
+            if liked.contains(posts.postID!) {
+                cell.likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+            } else {
+                cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+            }
+        } else {
+            cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+        }
+        
         cell.userImage.image = UIImage(named: (posts.anonymous! ? "anonymous" : posts.picture ?? "loading") )
         cell.postLabel.text = posts.text
         
         cell.commentButton.isHidden = (posts.disableReplies!)
         
+        let reportPost = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let deletePost = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
+        reportPost.addAction(UIAlertAction(title: "Report this Post", style: .destructive, handler: { ACTION in
+            let docData: [String: Any] = [
+                "reported_postID": posts.postID ?? "null",
+                "reported_post_text": posts.text ?? "null",
+                "reported_userID": posts.userID ?? "null",
+                "reporter_userID": Auth.auth().currentUser?.uid ?? "null"
+            ]
+            self.db.collection("reports").addDocument(data: docData)
+        }))
+        reportPost.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { ACTION in
+            self.dismiss(animated: true, completion: nil)
+        }))
+        
+        deletePost.addAction(UIAlertAction(title: "Delete your post?", style: .destructive, handler: { ACTION in
+            self.db.collection("posts").document(posts.postID!).delete()
+        }))
+        deletePost.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { UIAlertAction in
+            self.dismiss(animated: true, completion: nil)
+        }))
+        
+        cell.moreButtonTappedCallBack = {
+            if Auth.auth().currentUser?.uid == posts.userID {
+                self.present(deletePost, animated: true, completion: nil)
+            } else {
+                self.present(reportPost, animated: true, completion: nil)
+            }
+        }
+        
+        cell.likeButtonTappedCallBack = {
+            
+            var likedPosts = self.defaults.stringArray(forKey: "likedPosts")
+            
+            if let liked = likedPosts {
+                if liked.contains(posts.postID!) {
+                    return
+                }
+            }
+            
+            let postsRef = self.db.collection("posts").document(posts.postID!)
+            postsRef.updateData(["likes": FieldValue.increment(Int64(1))])
+            cell.likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+            cell.likeButton.setTitle(" \(posts.likes ?? 0)", for: .normal)
+            likedPosts?.append(posts.postID!)
+            self.defaults.setValue(likedPosts, forKey:"likedPosts")
+        }
         return cell
     }
     

@@ -24,7 +24,8 @@ class iThoughtPostsCell: UITableViewCell {
     var cellDelegate: TableViewButtonClicked?
     var index: IndexPath?
     
-    var buttonTapCallback: () -> ()  = { }
+    var likeButtonTappedCallBack: () -> ()  = { }
+    var moreButtonTappedCallBack: () -> ()  = { }
     
     let db = Firestore.firestore()
     
@@ -33,7 +34,7 @@ class iThoughtPostsCell: UITableViewCell {
     let userImage = UIImageView()
     let usernameLabel = UILabel()
     let timeLabel = UILabel()
-    let reportButton = UIButton()
+    let moreButton = UIButton()
     let postLabel = UILabel()
     let likeButton = UIButton()
     let commentButton = UIButton()
@@ -60,6 +61,7 @@ class iThoughtPostsCell: UITableViewCell {
         setConstraints()
         
         likeButton.addTarget(self, action: #selector(likeTapped), for: .touchUpInside)
+        moreButton.addTarget(self, action: #selector(moreTapped), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -74,7 +76,7 @@ class iThoughtPostsCell: UITableViewCell {
     
     func configureButtons() {
         postView.addSubview(likeButton)
-        likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+//        likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
 //        likeButton.setTitle(" \(posts.likes ?? 0)", for: .normal)
         likeButton.tintColor = color
         
@@ -92,9 +94,9 @@ class iThoughtPostsCell: UITableViewCell {
         bookmarkButton.setImage(UIImage(systemName: "bookmark"), for: .normal)
         bookmarkButton.tintColor = color
         
-        postView.addSubview(reportButton)
-        reportButton.setImage(UIImage(systemName: "exclamationmark.triangle.fill"), for: .normal)
-        reportButton.tintColor = color
+        postView.addSubview(moreButton)
+        moreButton.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
+        moreButton.tintColor = color
     }
     func configureLabels() {
         // usernameLabel
@@ -146,8 +148,8 @@ class iThoughtPostsCell: UITableViewCell {
             bookmarkButton.trailingAnchor.constraint(equalTo: postView.trailingAnchor, constant: -20),
             bookmarkButton.centerYAnchor.constraint(equalTo: likeButton.centerYAnchor),
             
-            reportButton.centerYAnchor.constraint(equalTo: userImage.centerYAnchor),
-            reportButton.centerXAnchor.constraint(equalTo: bookmarkButton.centerXAnchor),
+            moreButton.centerYAnchor.constraint(equalTo: userImage.centerYAnchor),
+            moreButton.centerXAnchor.constraint(equalTo: bookmarkButton.centerXAnchor),
             
             timeLabel.bottomAnchor.constraint(equalTo: userImage.bottomAnchor),
             timeLabel.leadingAnchor.constraint(equalTo: usernameLabel.leadingAnchor),
@@ -160,7 +162,7 @@ class iThoughtPostsCell: UITableViewCell {
         postView.translatesAutoresizingMaskIntoConstraints = false
         userImage.translatesAutoresizingMaskIntoConstraints = false
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
-        reportButton.translatesAutoresizingMaskIntoConstraints = false
+        moreButton.translatesAutoresizingMaskIntoConstraints = false
         timeLabel.translatesAutoresizingMaskIntoConstraints = false
         postLabel.translatesAutoresizingMaskIntoConstraints = false
         likeButton.translatesAutoresizingMaskIntoConstraints = false
@@ -169,8 +171,11 @@ class iThoughtPostsCell: UITableViewCell {
     }
     
     @objc func likeTapped() {
-        buttonTapCallback()
-        cellDelegate?.likeButtonClicked(index: index!.row)
+        likeButtonTappedCallBack()
+//        cellDelegate?.likeButtonClicked(index: index!.row)
+    }
+    @objc func moreTapped() {
+        moreButtonTappedCallBack()
     }
     
 }
