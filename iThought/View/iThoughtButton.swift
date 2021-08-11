@@ -30,8 +30,10 @@ class iThoughtButton: UIButton {
     
     func lightUp() {
         UIView.animate(withDuration: 0.4) { [self] in
-            backgroundColor = UIColor(red: 123/255, green: 87/255, blue: 206/255, alpha: 1)
-            setTitleColor(.white, for: .normal)
+            backgroundColor = K.pColor
+            setTitleColor(K.sColor, for: .normal)
+            layer.borderColor = K.sColor.cgColor
+//            layer.borderWidth = 0.2
 
             layer.borderWidth = 0
             isEnabled = true

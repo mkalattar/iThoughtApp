@@ -19,7 +19,9 @@ class WelcomeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(red: 47/255, green: 53/255, blue: 61/255, alpha: 1)
+//        view.backgroundColor = UIColor(red: 47/255, green: 53/255, blue: 61/255, alpha: 1)
+        view.backgroundColor = K.bColor
+        
         title = "Welcome"
 
         view.addSubview(welcome)

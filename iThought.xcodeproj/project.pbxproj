@@ -25,6 +25,7 @@
 		206FB17E26A41DE6001991F0 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206FB17D26A41DE6001991F0 /* ProfileViewController.swift */; };
 		206FB18026A427BD001991F0 /* HNPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206FB17F26A427BD001991F0 /* HNPViewController.swift */; };
 		2071A34926B9D770004F7932 /* iThoughtPostsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2071A34826B9D770004F7932 /* iThoughtPostsCell.swift */; };
+		2076A75426C14B6100C9B995 /* K.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2076A75326C14B6100C9B995 /* K.swift */; };
 		208ECDF42699E23800FD994C /* iThoughtTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208ECDF32699E23800FD994C /* iThoughtTextField.swift */; };
 		208ECDF6269A155400FD994C /* iThoughtButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208ECDF5269A155400FD994C /* iThoughtButton.swift */; };
 		20B4307326B69084007C0EB5 /* ComposePostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B4307226B69084007C0EB5 /* ComposePostViewController.swift */; };
@@ -59,6 +60,7 @@
 		206FB17D26A41DE6001991F0 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		206FB17F26A427BD001991F0 /* HNPViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNPViewController.swift; sourceTree = "<group>"; };
 		2071A34826B9D770004F7932 /* iThoughtPostsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iThoughtPostsCell.swift; sourceTree = "<group>"; };
+		2076A75326C14B6100C9B995 /* K.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = K.swift; sourceTree = "<group>"; };
 		208ECDF32699E23800FD994C /* iThoughtTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iThoughtTextField.swift; sourceTree = "<group>"; };
 		208ECDF5269A155400FD994C /* iThoughtButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iThoughtButton.swift; sourceTree = "<group>"; };
 		20B4307226B69084007C0EB5 /* ComposePostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposePostViewController.swift; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 				2035DBEC2697235400F7D2B5 /* AppDelegate.swift */,
 				2035DBEE2697235400F7D2B5 /* SceneDelegate.swift */,
 				206DD3EF269B7C94006F97CC /* Extensions.swift */,
+				2076A75326C14B6100C9B995 /* K.swift */,
 				208ECDF9269A377700FD994C /* Model */,
 				208ECDF7269A373300FD994C /* View */,
 				208ECDF8269A373F00FD994C /* Controller */,
@@ -322,6 +325,7 @@
 				206FB17E26A41DE6001991F0 /* ProfileViewController.swift in Sources */,
 				206FB17A26A41D99001991F0 /* HomeViewController.swift in Sources */,
 				20B4307326B69084007C0EB5 /* ComposePostViewController.swift in Sources */,
+				2076A75426C14B6100C9B995 /* K.swift in Sources */,
 				20CD47A926AB841100196410 /* iThoughtCollectionViewCell.swift in Sources */,
 				206DD3F2269B86BB006F97CC /* iThoughtPasswordField.swift in Sources */,
 			);

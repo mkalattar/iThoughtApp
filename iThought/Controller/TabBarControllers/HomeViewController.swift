@@ -12,7 +12,7 @@ import FirebaseFirestore
 
 class HomeViewController: UIViewController {
     
-    let tableView = UITableView()
+    let postsTableView = UITableView()
     
     let db = Firestore.firestore()
     
@@ -22,41 +22,37 @@ class HomeViewController: UIViewController {
     let notFoundImage = UIImageView(image: UIImage(named: "no_posts"))
     let notFoundLabel = UILabel()
     
-    let options = UIAlertController(title: "Choose an option", message: nil, preferredStyle: .actionSheet) // Delete later
-
+    let options = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet) // Delete later
+    let loadingAlert = UIAlertController(title: nil, message: "Loading", preferredStyle: .alert)
     
     var postsArray = [iThoughtPost]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        configLoadingAlert()
         
-        view.addSubview(tableView)
-        tableView.backgroundColor = .clear
-        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
+        view.addSubview(postsTableView)
+        postsTableView.backgroundColor = .clear
+        postsTableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         
         fetchData { _ in
-//            self.tableView.reloadData()
+            self.loadingAlert.dismiss(animated: true, completion: nil)
         }
         configureTableView()
         setConstraints()
         configNotFoundViews()
+        
     }
     
-    
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//
-//        fetchData { done in
-//            if done {
-//                self.tableView.reloadData()
-//            } else {
-//                print("something happened")
-//            }
-//        }
-//    }
-//
+    func configLoadingAlert() {
+        let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.style = UIActivityIndicatorView.Style.medium
+        loadingIndicator.startAnimating();
+
+        loadingAlert.view.addSubview(loadingIndicator)
+    }
     
     func configNotFoundViews() {
         view.addSubview(notFoundImage)
@@ -86,14 +82,14 @@ class HomeViewController: UIViewController {
     }
     func configureTableView() {
         
-        tableView.register(iThoughtPostsCell.self, forCellReuseIdentifier: iThoughtPostsCell.id)
-        tableView.allowsSelection = false
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 200
+        postsTableView.register(iThoughtPostsCell.self, forCellReuseIdentifier: iThoughtPostsCell.id)
+        postsTableView.allowsSelection = false
+        postsTableView.rowHeight = UITableView.automaticDimension
+        postsTableView.estimatedRowHeight = 200
 
         
-        tableView.delegate   = self
-        tableView.dataSource = self
+        postsTableView.delegate   = self
+        postsTableView.dataSource = self
     }
     
 //    func loadMessages() {
@@ -118,6 +114,7 @@ class HomeViewController: UIViewController {
 //        }
 //    }
     func fetchData(completion: @escaping (Bool) -> ()) {
+        present(loadingAlert, animated: true, completion: nil)
         let now = Date()
         db.collection("posts")
             .order(by: "endAt", descending: true)
@@ -149,14 +146,16 @@ class HomeViewController: UIViewController {
                     if self.postsArray.isEmpty {
                         self.notFoundImage.isHidden = false
                         self.notFoundLabel.isHidden = false
+                        self.postsTableView.isHidden = true
                     } else {
                         self.notFoundLabel.isHidden = true
                         self.notFoundImage.isHidden = true
+                        self.postsTableView.isHidden = false
                     }
+                    
                 }
                 DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    
+                    self.postsTableView.reloadData()
                 }
                 completion(true)
             }
@@ -191,21 +190,21 @@ class HomeViewController: UIViewController {
     
     func setConstraints() {
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            postsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            postsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            postsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            postsTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        postsTableView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     func setupView() {
-        view.backgroundColor    = UIColor(red: 47/255, green: 53/255, blue: 61/255, alpha: 1)
+        view.backgroundColor    = K.bColor
         let composeButton       = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(composePost))
         composeButton.tintColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
-        let refreshButton       = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshTableView))
+        let _                   = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshTableView))
         
-        navigationItem.rightBarButtonItems           = [refreshButton, composeButton]
+        navigationItem.rightBarButtonItems           = [composeButton]
         navigationItem.rightBarButtonItem?.tintColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
         configOptionsButton()
     }
@@ -216,7 +215,7 @@ class HomeViewController: UIViewController {
     
     func refreshTable() {
         fetchData { _ in
-            self.tableView.reloadData()
+            self.postsTableView.reloadData()
         }
     }
     
@@ -240,6 +239,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         cell.usernameLabel.text = (posts.anonymous! ? "Anonymous Post" : posts.username)
         cell.userID             = posts.userID
         cell.postID             = posts.postID
+        cell.sensitive.isHidden = !(posts.senstive!)
         
         cell.index = indexPath
         
@@ -249,7 +249,10 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         let hour    = calendar.component(.hour, from: date)
         let minute  = calendar.component(.minute, from: date)
         
-        cell.timeLabel.text = "\(hour):\(minute)"
+        let hourString = hour < 10 ? "0\(hour)" : "\(hour)"
+        let minuteString = minute < 10 ? "0\(minute)" : "\(minute)"
+        
+        cell.timeLabel.text = "\(hourString):\(minuteString)"
         cell.likeButton.setTitle(" \(posts.likes ?? 0)", for: .normal)
         
         let likedPosts = self.defaults.stringArray(forKey: "likedPosts")
@@ -272,7 +275,41 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         let reportPost = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let deletePost = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        reportPost.addAction(UIAlertAction(title: "Report this Post", style: .destructive, handler: { ACTION in
+        let reportPost14 = UIAction(title: "Report Post", image: UIImage(systemName: "exclamationmark.bubble.fill")) { action in
+            let docData: [String: Any] = [
+                "reported_postID":      posts.postID  ?? "null",
+                "reported_post_text":   posts.text    ?? "null",
+                "reported_userID":      posts.userID  ?? "null",
+                "reporter_userID":      Auth.auth().currentUser?.uid ?? "null"
+            ]
+            self.db.collection("reports").addDocument(data: docData)
+        }
+        let deletePost14 = UIAction(title: "Delete Post",image: UIImage(systemName: "trash.fill"), attributes: .destructive) { action in
+            self.db.collection("posts").document(posts.postID!).delete()
+        }
+        let reportPostArray = [reportPost14]
+        let deletePostArray = [deletePost14]
+        
+        
+        if #available(iOS 14.0, *) {
+            cell.moreButton.showsMenuAsPrimaryAction = true
+            if Auth.auth().currentUser?.uid == posts.userID {
+                cell.moreButton.menu = UIMenu(title: "", children: deletePostArray)
+            } else {
+                cell.moreButton.menu = UIMenu(title: "", children: reportPostArray)
+            }
+        } else {
+            cell.moreButtonTappedCallBack = {
+                if Auth.auth().currentUser?.uid == posts.userID {
+                    self.present(deletePost, animated: true, completion: nil)
+                } else {
+                    self.present(reportPost, animated: true, completion: nil)
+                }
+            }
+        }
+        
+        
+        reportPost.addAction(UIAlertAction(title: "Report Post", style: .destructive, handler: { ACTION in
             let docData: [String: Any] = [
                 "reported_postID":      posts.postID  ?? "null",
                 "reported_post_text":   posts.text    ?? "null",
@@ -292,13 +329,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             self.dismiss(animated: true, completion: nil)
         }))
         
-        cell.moreButtonTappedCallBack = {
-            if Auth.auth().currentUser?.uid == posts.userID {
-                self.present(deletePost, animated: true, completion: nil)
-            } else {
-                self.present(reportPost, animated: true, completion: nil)
-            }
-        }
+        
         
         cell.likeButtonTappedCallBack = {
             
@@ -334,35 +365,58 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension HomeViewController {
     
+    func deleteOldPosts() {
+        self.db.collection("posts").whereField("endAt", isLessThanOrEqualTo: Date()).getDocuments { snapshot, error in
+            if let e = error {
+                print(e.localizedDescription)
+            } else {
+                if let snapshot = snapshot {
+                    for doc in snapshot.documents {
+                        self.db.collection("posts").document(doc.documentID).delete()
+                    }
+                }
+            }
+        }
+    }
+    
+    func deleteAllPosts() {
+        self.db.collection("posts").getDocuments { snapshot, error in
+            if let e = error {
+                print(e.localizedDescription)
+            } else {
+                if let snapshot = snapshot {
+                    for doc in snapshot.documents {
+                        self.db.collection("posts").document(doc.documentID).delete()
+                    }
+                }
+            }
+        }
+    }
+    
     func configOptionsButton() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "applelogo"), style: .plain, target: self, action: #selector(optionsTapped))
+        let deleteAllPosts = UIAction(title: "Delete All Posts", image: UIImage(systemName: "trash.fill"), attributes: .destructive) { action in
+            self.deleteAllPosts()
+        }
+        let deleteOldPosts = UIAction(title: "Delete Posts Over 24H", image: UIImage(systemName: "trash.fill"), attributes: .destructive) { action in
+            self.deleteOldPosts()
+        }
+        
+        let actions = [deleteAllPosts, deleteOldPosts]
+        
+        if #available(iOS 14.0, *) {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Debug options", image: nil, primaryAction: nil, menu:  UIMenu(title: "", children: actions))
+        } else {
+            // Fallback on earlier versions
+            navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Debug Options", style: .plain, target: self, action: #selector(optionsTapped))
+        }
         navigationItem.leftBarButtonItem?.tintColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
+    
         
         options.addAction(UIAlertAction(title: "Delete Posts Over 24H", style: .destructive, handler: { ACTION in
-            self.db.collection("posts").whereField("endAt", isLessThanOrEqualTo: Date()).getDocuments { snapshot, error in
-                if let e = error {
-                    print(e.localizedDescription)
-                } else {
-                    if let snapshot = snapshot {
-                        for doc in snapshot.documents {
-                            self.db.collection("posts").document(doc.documentID).delete()
-                        }
-                    }
-                }
-            }
+            self.deleteOldPosts()
         }))
         options.addAction(UIAlertAction(title: "Delete all posts", style: .destructive, handler: { ACTION in
-            self.db.collection("posts").getDocuments { snapshot, error in
-                if let e = error {
-                    print(e.localizedDescription)
-                } else {
-                    if let snapshot = snapshot {
-                        for doc in snapshot.documents {
-                            self.db.collection("posts").document(doc.documentID).delete()
-                        }
-                    }
-                }
-            }
+            self.deleteAllPosts()
         }))
         options.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: { ACTION in
             self.options.dismiss(animated: true, completion: nil)

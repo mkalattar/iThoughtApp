@@ -27,7 +27,7 @@ class LoginViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(red: 47/255, green: 53/255, blue: 61/255, alpha: 1)
+        view.backgroundColor = K.bColor
         title = "Sign In"
         
         
@@ -39,7 +39,7 @@ class LoginViewController: UIViewController {
         view.addSubview(signUpInstead)
         view.addSubview(signUpButton)
         
-        forgotPasswordAlert.view.tintColor = UIColor(red: 123/255, green: 87/255, blue: 206/255, alpha: 1)
+        forgotPasswordAlert.view.tintColor = K.sColor
         
         setConstraints()
         loginButton.isEnabled = false
@@ -117,10 +117,10 @@ class LoginViewController: UIViewController {
         
         forgotPasswordButton.addTarget(self, action: #selector(forgotPasswordTapped), for: .touchUpInside)
         forgotPasswordButton.setTitle("Forgot Password?", for: .normal)
-        forgotPasswordButton.setTitleColor(UIColor(red: 123/255, green: 87/255, blue: 206/255, alpha: 1), for: .normal)
+        forgotPasswordButton.setTitleColor(K.sColor, for: .normal)
         
         signUpButton.setTitle("Sign Up", for: .normal)
-        signUpButton.setTitleColor(UIColor(red: 123/255, green: 87/255, blue: 206/255, alpha: 1), for: .normal)
+        signUpButton.setTitleColor(K.sColor, for: .normal)
         signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
     }
     
@@ -130,7 +130,7 @@ class LoginViewController: UIViewController {
     }
     
     @objc func signUpTapped() {
-        navigationController?.pushViewController(SignUpViewController(), animated: true)
+        navigationController?.popToRootViewController(animated: true)
     }
     
     func signOut() {

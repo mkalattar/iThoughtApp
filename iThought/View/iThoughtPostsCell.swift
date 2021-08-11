@@ -16,10 +16,11 @@ protocol TableViewButtonClicked {
 class iThoughtPostsCell: UITableViewCell {
     
     static let id = "postsCell"
-    var posts = iThoughtPost()
+//    var posts = iThoughtPost()
     
     var postID: String?
     var userID: String?
+    var isSensitive: Bool?
     
     var cellDelegate: TableViewButtonClicked?
     var index: IndexPath?
@@ -35,10 +36,11 @@ class iThoughtPostsCell: UITableViewCell {
     let usernameLabel = UILabel()
     let timeLabel = UILabel()
     let moreButton = UIButton()
-    let postLabel = UILabel()
+    let postLabel = UITextView()
     let likeButton = UIButton()
     let commentButton = UIButton()
     let bookmarkButton = UIButton()
+    let sensitive = UILabel()
     
     let color = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
     
@@ -112,11 +114,28 @@ class iThoughtPostsCell: UITableViewCell {
         postView.addSubview(postLabel)
 //        postLabel.text = posts.text
         postLabel.font = UIFont.systemFont(ofSize: 15)
-        postLabel.numberOfLines = 0
+//        postLabel.numberOfLines = 0
+        postLabel.isEditable = false
+        postLabel.dataDetectorTypes = UIDataDetectorTypes.link
+        postLabel.isScrollEnabled = false
+        postLabel.backgroundColor = .clear
+        
         
         postView.addSubview(timeLabel)
 //        timeLabel.text = "\(posts.createdAt ?? Date())"
         timeLabel.textColor = .systemGray
+        timeLabel.font = UIFont.systemFont(ofSize: 15)
+//        timeLabel.backgroundColor = .white
+//        timeLabel.layer.cornerRadius = 2
+//        timeLabel.clipsToBounds = true
+        
+        postView.addSubview(sensitive)
+        sensitive.textColor = /*.white*/ color
+        sensitive.backgroundColor = .systemGray2
+        sensitive.clipsToBounds = true
+        sensitive.layer.cornerRadius = 3
+        sensitive.text = " SENSITIVE "
+        sensitive.font = UIFont.systemFont(ofSize: 12)
     }
     
     func configureImage() {
@@ -135,8 +154,11 @@ class iThoughtPostsCell: UITableViewCell {
             userImage.widthAnchor.constraint(equalToConstant: 75),
             userImage.heightAnchor.constraint(equalTo: userImage.widthAnchor, multiplier: 1/1.33333),
             
-            usernameLabel.topAnchor.constraint(equalTo: userImage.topAnchor),
+            usernameLabel.topAnchor.constraint(equalTo: userImage.topAnchor, constant: 7),
             usernameLabel.leadingAnchor.constraint(equalTo: userImage.trailingAnchor, constant: 10),
+            
+            sensitive.leadingAnchor.constraint(equalTo: usernameLabel.trailingAnchor, constant: 10),
+            sensitive.bottomAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: -3),
             
             likeButton.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 19),
             likeButton.bottomAnchor.constraint(equalTo: postView.bottomAnchor, constant: -15),
@@ -151,11 +173,11 @@ class iThoughtPostsCell: UITableViewCell {
             moreButton.centerYAnchor.constraint(equalTo: userImage.centerYAnchor),
             moreButton.centerXAnchor.constraint(equalTo: bookmarkButton.centerXAnchor),
             
-            timeLabel.bottomAnchor.constraint(equalTo: userImage.bottomAnchor),
+            timeLabel.bottomAnchor.constraint(equalTo: userImage.bottomAnchor, constant: -7),
             timeLabel.leadingAnchor.constraint(equalTo: usernameLabel.leadingAnchor),
             
             postLabel.topAnchor.constraint(equalTo: userImage.bottomAnchor, constant: 5),
-            postLabel.leadingAnchor.constraint(equalTo: userImage.leadingAnchor, constant: 15),
+            postLabel.leadingAnchor.constraint(equalTo: userImage.leadingAnchor, constant: 10),
             postLabel.trailingAnchor.constraint(equalTo: postView.trailingAnchor, constant: -5),
         ])
         
@@ -168,6 +190,7 @@ class iThoughtPostsCell: UITableViewCell {
         likeButton.translatesAutoresizingMaskIntoConstraints = false
         bookmarkButton.translatesAutoresizingMaskIntoConstraints = false
         commentButton.translatesAutoresizingMaskIntoConstraints = false
+        sensitive.translatesAutoresizingMaskIntoConstraints = false
     }
     
     @objc func likeTapped() {

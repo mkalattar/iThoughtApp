@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseDatabase
 import FirebaseAuth
+import Firebase
 
 class BookmarksViewController: UIViewController {
 
@@ -16,10 +17,12 @@ class BookmarksViewController: UIViewController {
     
     let userID = Auth.auth().currentUser?.uid
     let database = Database.database().reference()
+    let db = Firestore.firestore()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(red: 47/255, green: 53/255, blue: 61/255, alpha: 1)
+        view.backgroundColor = K.bColor
+        loadBookmarks()
         configNotFoundViews()
     }
     
@@ -29,14 +32,34 @@ class BookmarksViewController: UIViewController {
     }
     
     func loadBookmarks() {
-        database.child("Users").child(userID!).child("bookmarks").observe(.value) { snapshot in
-            if let _ = snapshot.value as? String {
-                
-            } else {
-                self.notFoundImage.isHidden = false
-                self.notFoundLabel.isHidden = false
+        
+        db.collection("bookmarks")
+            .order(by: "createdAt", descending: true)
+            .whereField("uid", isEqualTo: userID!)
+            .addSnapshotListener { snapshot, error in
+                if let e = error {
+                    print(e.localizedDescription)
+                } else {
+                    if let snapshot = snapshot?.documents {
+                        if snapshot.isEmpty {
+                            self.notFoundImage.isHidden = false
+                            self.notFoundLabel.isHidden = false
+                        } else {
+                            self.notFoundImage.isHidden = true
+                            self.notFoundLabel.isHidden = true
+                        }
+                    }
+                }
             }
-        }
+        
+//        database.child("Users").child(userID!).child("bookmarks").observe(.value) { snapshot in
+//            if let _ = snapshot.value as? String {
+//
+//            } else {
+//                self.notFoundImage.isHidden = false
+//                self.notFoundLabel.isHidden = false
+//            }
+//        }
     }
     
     func configNotFoundViews() {

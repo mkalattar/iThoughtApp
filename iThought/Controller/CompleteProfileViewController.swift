@@ -26,7 +26,7 @@ class CompleteProfileViewController: UIViewController {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
         title = "Complete your profile"
-        view.backgroundColor = UIColor(red: 47/255, green: 53/255, blue: 61/255, alpha: 1)
+        view.backgroundColor = K.bColor
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         
@@ -89,10 +89,12 @@ class CompleteProfileViewController: UIViewController {
     }
     
     @objc func imageIconButtonTapped() {
-        let vc = UINavigationController(rootViewController: ChooseImageViewController())
+        let vc = ChooseImageViewController()
         vc.title = "Choose image"
         vc.modalPresentationStyle = .fullScreen
-        present(vc, animated: true) { [self] in
+        vc.img.image = imageIconButton.image(for: .normal) ?? UIImage(named: "male_01")
+        
+        present(UINavigationController(rootViewController: vc), animated: true) { [self] in
             database.child("Users").child(userId!).child("picture").observe(.value) { snapshot in
                 if let pic = snapshot.value as? String {
                     self.imageIconButton.setImage(UIImage(named: pic), for: .normal)

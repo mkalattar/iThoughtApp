@@ -36,8 +36,8 @@ class iThoughtSettingsButtons: UIButton {
         imageEdgeInsets.left = -30
         
         titleLabel?.font   = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        backgroundColor = UIColor(red: 123/255, green: 87/255, blue: 206/255, alpha: 1)
-        setTitleColor(.white, for: .normal)
+        backgroundColor = K.pColor
+        setTitleColor(K.sColor, for: .normal)
         translatesAutoresizingMaskIntoConstraints = false
     }
     

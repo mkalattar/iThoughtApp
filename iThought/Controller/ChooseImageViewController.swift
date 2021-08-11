@@ -13,7 +13,7 @@ class ChooseImageViewController: UIViewController {
 
     let database = Database.database().reference()
     let userId = Auth.auth().currentUser?.uid
-    let img = UIImageView(image: UIImage(named: "male_01"))
+    var img = UIImageView()
     
     var selectedIndexPath: IndexPath?
     var selectedImage: String?
@@ -38,7 +38,7 @@ class ChooseImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Choose image"
-        view.backgroundColor = UIColor(red: 47/255, green: 53/255, blue: 61/255, alpha: 1)
+        view.backgroundColor = K.bColor
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneTapped))
         
@@ -64,9 +64,9 @@ class ChooseImageViewController: UIViewController {
             img.widthAnchor.constraint(equalToConstant: 200),
             img.heightAnchor.constraint(equalToConstant: 150),
             
-            collectionView.topAnchor.constraint(equalTo: img.bottomAnchor, constant: 50),
+            collectionView.topAnchor.constraint(equalTo: img.bottomAnchor, constant: 30),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 10),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         img.translatesAutoresizingMaskIntoConstraints = false

@@ -13,7 +13,7 @@ class ProfileViewController: UIViewController {
     
 //    let signOut = UIButton()
     let defaults = UserDefaults.standard
-    let tableView = UITableView()
+    let userPostsTableView = UITableView()
     var postsArray = [iThoughtPost]()
     let db = Firestore.firestore()
     
@@ -39,6 +39,8 @@ class ProfileViewController: UIViewController {
     
     let activePostsLabel = UILabel()
     let refreshButton = UIButton()
+    
+    let vc = HomeViewController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,14 +56,14 @@ class ProfileViewController: UIViewController {
         view.addSubview(likesLabel)
         view.addSubview(postsLabel)
         view.addSubview(activePostsLabel)
-        view.addSubview(tableView)
-        tableView.backgroundColor = .clear
-        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
+        view.addSubview(userPostsTableView)
+        userPostsTableView.backgroundColor = .clear
+        userPostsTableView.separatorStyle = UITableViewCell.SeparatorStyle.none
   
         setConstraints()
         configureTableView()
         printStuff()
-        tableView.reloadData()
+        userPostsTableView.reloadData()
     }
     
 //    override func viewDidAppear(_ animated: Bool) {
@@ -72,14 +74,14 @@ class ProfileViewController: UIViewController {
     
     func configureTableView() {
         
-        tableView.register(iThoughtPostsCell.self, forCellReuseIdentifier: iThoughtPostsCell.id)
-        tableView.allowsSelection = false
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 200
+        userPostsTableView.register(iThoughtPostsCell.self, forCellReuseIdentifier: iThoughtPostsCell.id)
+        userPostsTableView.allowsSelection = false
+        userPostsTableView.rowHeight = UITableView.automaticDimension
+        userPostsTableView.estimatedRowHeight = 200
 
         
-        tableView.delegate = self
-        tableView.dataSource = self
+        userPostsTableView.delegate = self
+        userPostsTableView.dataSource = self
     }
     
     func fetchData(completion: @escaping (Bool) -> ()) {
@@ -126,7 +128,7 @@ class ProfileViewController: UIViewController {
     }
     
     func setupView() {
-        view.backgroundColor = UIColor(red: 47/255, green: 53/255, blue: 61/255, alpha: 1)
+        view.backgroundColor = K.bColor
 //        view.backgroundColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "gearshape.fill"), style: .plain, target: self, action: #selector(settings))
@@ -170,10 +172,10 @@ class ProfileViewController: UIViewController {
             activePostsLabel.topAnchor.constraint(equalTo: dividerIcon.bottomAnchor, constant: 20),
             activePostsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             
-            tableView.topAnchor.constraint(equalTo: activePostsLabel.bottomAnchor, constant: 10),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            userPostsTableView.topAnchor.constraint(equalTo: activePostsLabel.bottomAnchor, constant: 10),
+            userPostsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            userPostsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            userPostsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             
         ])
         profileImg.translatesAutoresizingMaskIntoConstraints = false
@@ -185,7 +187,7 @@ class ProfileViewController: UIViewController {
         postsIcon.translatesAutoresizingMaskIntoConstraints = false
         postsLabel.translatesAutoresizingMaskIntoConstraints = false
         activePostsLabel.translatesAutoresizingMaskIntoConstraints = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        userPostsTableView.translatesAutoresizingMaskIntoConstraints = false
     }
     
         let waitingAlert = UIAlertController(title: nil, message: "Loading...", preferredStyle: .alert)
@@ -228,9 +230,9 @@ class ProfileViewController: UIViewController {
         configImg()
         configLabels()
         fetchData { _ in
-            self.tableView.reloadData()
+            self.userPostsTableView.reloadData()
         }
-        tableView.reloadData()
+        userPostsTableView.reloadData()
     }
     
     func printStuff() {
@@ -252,7 +254,9 @@ class ProfileViewController: UIViewController {
     }
     
     @objc func settings() {
-        navigationController?.pushViewController(SettingsViewController(), animated: true)
+//        navigationController?.pushViewController(SettingsViewController(), animated: true)
+        let settingsNC = UINavigationController(rootViewController: SettingsViewController())
+        present(settingsNC, animated: true)
     }
 
 }
@@ -262,23 +266,29 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         return postsArray.count
     }
     
+    
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: iThoughtPostsCell.id, for: indexPath) as! iThoughtPostsCell
                 
         let posts = postsArray[indexPath.row]
         cell.usernameLabel.text = (posts.anonymous! ? "Anonymous Post" : posts.username)
-        cell.userID = posts.userID
-        cell.postID = posts.postID
+        cell.userID             = posts.userID
+        cell.postID             = posts.postID
+        cell.sensitive.isHidden = !(posts.senstive!)
         
         cell.index = indexPath
         
-        let date = posts.createdAt!.dateValue()
+        let date     = posts.createdAt!.dateValue()
         let calendar = Calendar.current
         
-        let hour = calendar.component(.hour, from: date)
-        let minute = calendar.component(.minute, from: date)
+        let hour    = calendar.component(.hour, from: date)
+        let minute  = calendar.component(.minute, from: date)
         
-        cell.timeLabel.text = "\(hour):\(minute)"
+        let hourString = hour < 10 ? "0\(hour)" : "\(hour)"
+        let minuteString = minute < 10 ? "0\(minute)" : "\(minute)"
+        
+        cell.timeLabel.text = "\(hourString):\(minuteString)"
         cell.likeButton.setTitle(" \(posts.likes ?? 0)", for: .normal)
         
         let likedPosts = self.defaults.stringArray(forKey: "likedPosts")
@@ -293,20 +303,54 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
         }
         
-        cell.userImage.image = UIImage(named: (posts.anonymous! ? "anonymous" : posts.picture ?? "loading") )
-        cell.postLabel.text = posts.text
+        cell.userImage.image    = UIImage(named: (posts.anonymous! ? "anonymous" : posts.picture ?? "loading") )
+        cell.postLabel.text     = posts.text
         
         cell.commentButton.isHidden = (posts.disableReplies!)
         
         let reportPost = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let deletePost = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        reportPost.addAction(UIAlertAction(title: "Report this Post", style: .destructive, handler: { ACTION in
+        let reportPost14 = UIAction(title: "Report Post", image: UIImage(systemName: "exclamationmark.bubble.fill")) { action in
             let docData: [String: Any] = [
-                "reported_postID": posts.postID ?? "null",
-                "reported_post_text": posts.text ?? "null",
-                "reported_userID": posts.userID ?? "null",
-                "reporter_userID": Auth.auth().currentUser?.uid ?? "null"
+                "reported_postID":      posts.postID  ?? "null",
+                "reported_post_text":   posts.text    ?? "null",
+                "reported_userID":      posts.userID  ?? "null",
+                "reporter_userID":      Auth.auth().currentUser?.uid ?? "null"
+            ]
+            self.db.collection("reports").addDocument(data: docData)
+        }
+        let deletePost14 = UIAction(title: "Delete Post",image: UIImage(systemName: "trash.fill"), attributes: .destructive) { action in
+            self.db.collection("posts").document(posts.postID!).delete()
+        }
+        let reportPostArray = [reportPost14]
+        let deletePostArray = [deletePost14]
+        
+        
+        if #available(iOS 14.0, *) {
+            cell.moreButton.showsMenuAsPrimaryAction = true
+            if Auth.auth().currentUser?.uid == posts.userID {
+                cell.moreButton.menu = UIMenu(title: "", children: deletePostArray)
+            } else {
+                cell.moreButton.menu = UIMenu(title: "", children: reportPostArray)
+            }
+        } else {
+            cell.moreButtonTappedCallBack = {
+                if Auth.auth().currentUser?.uid == posts.userID {
+                    self.present(deletePost, animated: true, completion: nil)
+                } else {
+                    self.present(reportPost, animated: true, completion: nil)
+                }
+            }
+        }
+        
+        
+        reportPost.addAction(UIAlertAction(title: "Report Post", style: .destructive, handler: { ACTION in
+            let docData: [String: Any] = [
+                "reported_postID":      posts.postID  ?? "null",
+                "reported_post_text":   posts.text    ?? "null",
+                "reported_userID":      posts.userID  ?? "null",
+                "reporter_userID":      Auth.auth().currentUser?.uid ?? "null"
             ]
             self.db.collection("reports").addDocument(data: docData)
         }))
@@ -321,13 +365,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             self.dismiss(animated: true, completion: nil)
         }))
         
-        cell.moreButtonTappedCallBack = {
-            if Auth.auth().currentUser?.uid == posts.userID {
-                self.present(deletePost, animated: true, completion: nil)
-            } else {
-                self.present(reportPost, animated: true, completion: nil)
-            }
-        }
+        
         
         cell.likeButtonTappedCallBack = {
             

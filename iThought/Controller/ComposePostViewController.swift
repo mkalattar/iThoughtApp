@@ -16,8 +16,9 @@ class ComposePostViewController: UIViewController {
     let userID = Auth.auth().currentUser?.uid
     let defaults = UserDefaults.standard
     let db = Firestore.firestore()
+    let alert = UIAlertController(title: "Please make sure to write something before posting", message: nil, preferredStyle: .alert)
 
-    let tableView = UITableView()
+    let optionsTableView = UITableView()
     
 //    var currentUsr = iThoughtUser()
     
@@ -31,6 +32,7 @@ class ComposePostViewController: UIViewController {
     let textView = UITextView()
     
     let postView = UIView()
+    let sensitiveLabel = UILabel()
     
     var anonymous = false
     var senstive = false
@@ -39,9 +41,10 @@ class ComposePostViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Compose a Thought"
-        view.backgroundColor = UIColor(red: 47/255, green: 53/255, blue: 61/255, alpha: 1)
+        view.backgroundColor = K.bColor
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Post your Thought", style: .plain, target: self, action: #selector(postTapped))
         navigationItem.rightBarButtonItem?.tintColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
+        alert.addAction(UIAlertAction(title: "Okay!", style: .cancel, handler: nil))
         
 //        database.child("Users").child(userID!).observe(.value) { snapshot in
 //            guard let userDic = snapshot.value as? [String: Any] else { return }
@@ -68,8 +71,9 @@ class ComposePostViewController: UIViewController {
     
     @objc func postTapped() {
         
-        if textView.text == "" {
-            // alert
+        if textView.text == "Write something..." && textView.textColor === UIColor.systemGray {
+            present(alert, animated: true, completion: nil)
+            return
         }
         
         let today = Date()
@@ -106,18 +110,17 @@ class ComposePostViewController: UIViewController {
             postView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             postView.heightAnchor.constraint(equalToConstant: 210),
             
-            tableView.topAnchor.constraint(equalTo: postView.bottomAnchor, constant: 15),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
+            optionsTableView.topAnchor.constraint(equalTo: postView.bottomAnchor, constant: 15),
+            optionsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
+            optionsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
         ])
-        //        composePostTextView.translatesAutoresizingMaskIntoConstraints = false
         postView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        optionsTableView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        tableView.heightAnchor.constraint(equalToConstant: tableView.visibleCells[0].bounds.height * 3).isActive = true
+        optionsTableView.heightAnchor.constraint(equalToConstant: optionsTableView.visibleCells[0].bounds.height * 3).isActive = true
     }
     
     func configPostView() {
@@ -132,6 +135,7 @@ class ComposePostViewController: UIViewController {
         postView.addSubview(heartIcon)
         postView.addSubview(commentIcon)
         postView.addSubview(bookmarksIcon)
+        postView.addSubview(sensitiveLabel)
         
         NSLayoutConstraint.activate([
             userImageView.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 5),
@@ -141,6 +145,9 @@ class ComposePostViewController: UIViewController {
             
             usernameLabel.centerYAnchor.constraint(equalTo: userImageView.centerYAnchor),
             usernameLabel.leadingAnchor.constraint(equalTo: userImageView.trailingAnchor, constant: 10),
+            
+            sensitiveLabel.leadingAnchor.constraint(equalTo: usernameLabel.trailingAnchor, constant: 10),
+            sensitiveLabel.bottomAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: -3),
             
             heartIcon.leadingAnchor.constraint(equalTo: postView.leadingAnchor, constant: 25),
             heartIcon.bottomAnchor.constraint(equalTo: postView.bottomAnchor, constant: -15),
@@ -162,6 +169,7 @@ class ComposePostViewController: UIViewController {
         commentIcon.translatesAutoresizingMaskIntoConstraints = false
         bookmarksIcon.translatesAutoresizingMaskIntoConstraints = false
         textView.translatesAutoresizingMaskIntoConstraints = false
+        sensitiveLabel.translatesAutoresizingMaskIntoConstraints = false
         
         configImages()
         configLabel()
@@ -177,6 +185,14 @@ class ComposePostViewController: UIViewController {
         let username = defaults.string(forKey: "username")
         usernameLabel.text = username
         usernameLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        
+        sensitiveLabel.textColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
+        sensitiveLabel.backgroundColor = .systemGray2
+        sensitiveLabel.clipsToBounds = true
+        sensitiveLabel.layer.cornerRadius = 3
+        sensitiveLabel.text = " SENSITIVE "
+        sensitiveLabel.font = UIFont.systemFont(ofSize: 12)
+        sensitiveLabel.isHidden = true
     }
     
     func configTextView() {
@@ -188,14 +204,14 @@ class ComposePostViewController: UIViewController {
     }
     
     func configTableView() {
-        view.addSubview(tableView)
+        view.addSubview(optionsTableView)
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.allowsSelection = false
-        tableView.layer.cornerRadius = 18
-        tableView.isScrollEnabled = false
+        optionsTableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
+        optionsTableView.delegate = self
+        optionsTableView.dataSource = self
+        optionsTableView.allowsSelection = false
+        optionsTableView.layer.cornerRadius = 18
+        optionsTableView.isScrollEnabled = false
     }
     
     @objc func switchTapped(_ sender: UISwitch) {
@@ -210,8 +226,10 @@ class ComposePostViewController: UIViewController {
         } else if sender.tag == 1 {
             if sender.isOn {
                 senstive = true
+                sensitiveLabel.isHidden = false
             } else {
                 senstive = false
+                sensitiveLabel.isHidden = true
             }
         } else {
             if sender.isOn {
@@ -242,7 +260,7 @@ extension ComposePostViewController: UITableViewDelegate, UITableViewDataSource 
         
 //        cell.backgroundColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 0.5)
 //        54, 47, 61
-        cell.backgroundColor = UIColor(red: 54/255, green: 47/255, blue: 61/255, alpha: 1)
+        cell.backgroundColor = K.pColor
         cell.textLabel!.text = "\(settingsName[indexPath.row])"
         
         let settingsSwitch = UISwitch()

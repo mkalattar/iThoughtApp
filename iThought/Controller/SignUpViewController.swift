@@ -12,8 +12,8 @@ import FirebaseDatabase
 class SignUpViewController: UIViewController {
     
     let newUsernameTextField = iThoughtTextField(for: "Username", symbol: "person.fill", placeholder: "Choose a new Username")
-
     let newPasswordTextField = iThoughtPasswordField(for: "Password", symbol: "lock.fill", placeholder: "Choose a secure Password")
+    
     let signUpButton = iThoughtButton(bTitle: "Sign Up")
     let loginInstead = UILabel()
     let loginButton = UIButton()
@@ -25,7 +25,7 @@ class SignUpViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Sign up"
-        view.backgroundColor = UIColor(red: 47/255, green: 53/255, blue: 61/255, alpha: 1)
+        view.backgroundColor = K.bColor
         
         view.addSubview(newUsernameTextField)
         view.addSubview(newPasswordTextField)
@@ -134,7 +134,7 @@ class SignUpViewController: UIViewController {
         signUpButton.addTarget(self, action: #selector(signUpTapped), for: .touchUpInside)
         
         loginButton.setTitle("Log back in", for: .normal)
-        loginButton.setTitleColor(UIColor(red: 123/255, green: 87/255, blue: 206/255, alpha: 1), for: .normal)
+        loginButton.setTitleColor(K.sColor, for: .normal)
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
     }
     
