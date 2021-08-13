@@ -12,7 +12,7 @@ import Firebase
 
 class BookmarksViewController: UIViewController {
 
-    let notFoundImage = UIImageView(image: UIImage(named: "not_found"))
+    let notFoundImage = UIImageView(image: UIImage(named: "no_posts"))
     let notFoundLabel = UILabel()
     
     let userID = Auth.auth().currentUser?.uid

@@ -11,9 +11,10 @@ import FirebaseAuth
 
 class ChooseImageViewController: UIViewController {
 
-    let database = Database.database().reference()
+//    let database = Database.database().reference()
     let userId = Auth.auth().currentUser?.uid
     var img = UIImageView()
+    let alert = UIAlertController(title: "Make sure you chose an image before finishing.", message: nil, preferredStyle: .alert)
     
     var selectedIndexPath: IndexPath?
     var selectedImage: String?
@@ -39,6 +40,8 @@ class ChooseImageViewController: UIViewController {
         super.viewDidLoad()
         title = "Choose image"
         view.backgroundColor = K.bColor
+        alert.addAction(UIAlertAction(title: "Okay!", style: .cancel, handler: nil))
+        alert.view.tintColor = K.sColor
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneTapped))
         
@@ -53,8 +56,14 @@ class ChooseImageViewController: UIViewController {
     }
     
     @objc func doneTapped() {
-        database.child("Users").child(userId!).child("picture").setValue(selectedImage)
-        self.dismiss(animated: true, completion: nil)
+        if let selectedImg = selectedImage {
+//            database.child("Users").child(userId!).child("picture").setValue(selectedImg)
+            DatabaseManager.shared.db.collection("users").document(userId!).updateData(["picture": selectedImg])
+            self.dismiss(animated: true, completion: nil)
+        } else {
+            present(alert, animated: true, completion: nil)
+        }
+        
     }
     
     func setConstraints() {

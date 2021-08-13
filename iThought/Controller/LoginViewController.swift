@@ -125,7 +125,6 @@ class LoginViewController: UIViewController {
     }
     
     @objc func forgotPasswordTapped() {
-        
         present(forgotPasswordAlert, animated: true, completion: nil)
     }
     

@@ -73,7 +73,7 @@ extension iThoughtPasswordField {
                 }
             } else {
                 UIView.animate(withDuration: 0.4) { [self] in
-                    layer.borderColor = UIColor(red: 123/255, green: 87/255, blue: 206/255, alpha: 1).cgColor
+                    layer.borderColor = K.sColor.cgColor
                 }
             }
         }

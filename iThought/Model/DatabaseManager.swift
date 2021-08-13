@@ -16,40 +16,17 @@ class DatabaseManager {
     let database = Database.database().reference()
     let currentUsr = iThoughtUser()
     let userID = Auth.auth().currentUser?.uid
+    let db = Firestore.firestore()
     
     public func insertUser(user: iThoughtUser, id: String) {
-        database.child("Users").child(id).setValue([
+        
+        db.collection("users").document(id).setData([
             "bio": user.bio!,
             "overall_likes": user.overallLikes!,
             "overall_posts": user.overallPosts!,
             "picture": user.picture!,
             "username": user.username!
         ])
-    }
-    
-    public func getCurrentUsr() -> iThoughtUser {
-        database.child("Users").child(userID!).observe(.value) { snapshot in
-            if let userInfo = snapshot.value as? [String:Any] {
-                self.currentUsr.username = userInfo["username"] as? String
-                self.currentUsr.picture = userInfo["picture"] as? String
-                self.currentUsr.bio = userInfo["bio"] as? String
-                self.currentUsr.overallLikes = userInfo["overall_likes"] as? Int
-                self.currentUsr.overallPosts = userInfo["overall_posts"] as? Int
-            }
-        }
-        return currentUsr
-    }
-    
-    public func getCurrentUser(vc: ProfileViewController) {
-        database.child("Users").child(userID!).observeSingleEvent(of: .value, with: { snapshot in
-            let value = snapshot.value as? NSDictionary
-            
-            vc.bio = value?["bio"] as? String ?? "error"
-            vc.overallLikes = value?["overall_likes"] as? Int ?? -1
-            vc.overallPosts = value?["overall_posts"] as? Int ?? -1
-            vc.picture = value?["picture"] as? String ?? "error"
-            vc.username = value?["username"] as? String ?? "error"
-        })
     }
     
 }

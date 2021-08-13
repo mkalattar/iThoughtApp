@@ -11,20 +11,13 @@ import Firebase
 
 class ProfileViewController: UIViewController {
     
-//    let signOut = UIButton()
+    //    let signOut = UIButton()
     let defaults = UserDefaults.standard
     let userPostsTableView = UITableView()
     var postsArray = [iThoughtPost]()
     let db = Firestore.firestore()
     
-    let userID = Auth.auth().currentUser?.uid
-
-    
-    var picture: String?
-    var username: String?
-    var bio: String?
-    var overallLikes: Int?
-    var overallPosts: Int?
+    var userID: String?
     
     let profileImg = UIImageView()
     let usernameLabel = UILabel()
@@ -41,9 +34,10 @@ class ProfileViewController: UIViewController {
     let refreshButton = UIButton()
     
     let vc = HomeViewController()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         
         setupView()
         
@@ -59,18 +53,36 @@ class ProfileViewController: UIViewController {
         view.addSubview(userPostsTableView)
         userPostsTableView.backgroundColor = .clear
         userPostsTableView.separatorStyle = UITableViewCell.SeparatorStyle.none
-  
+        
+        fetchData { _ in
+            self.userPostsTableView.reloadData()
+        }
+        
         setConstraints()
         configureTableView()
-        printStuff()
-        userPostsTableView.reloadData()
     }
     
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//
-//        tableView.reloadData()
-//    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        getUserData()
+    }
+    
+    func getUserData() {
+        print(userID!)
+        DatabaseManager.shared.db.collection("users").document(userID!).addSnapshotListener { snapshot, error in
+            if let e = error {
+                print(e.localizedDescription)
+            } else {
+                if let snap = snapshot {
+                    self.usernameLabel.text = snap.get("username") as? String
+                    self.bioLabel.text = snap.get("bio") as? String
+//                    self.likesLabel.text = "\(snap.get("overall_likes") as? Int ?? 0)"
+//                    self.postsLabel.text = "\(snap.get("overall_posts") as? Int ?? 0)"
+                    self.profileImg.image = UIImage(named: snap.get("picture") as? String ?? "loading")
+                }
+            }
+        }
+    }
     
     func configureTableView() {
         
@@ -78,7 +90,7 @@ class ProfileViewController: UIViewController {
         userPostsTableView.allowsSelection = false
         userPostsTableView.rowHeight = UITableView.automaticDimension
         userPostsTableView.estimatedRowHeight = 200
-
+        
         
         userPostsTableView.delegate = self
         userPostsTableView.dataSource = self
@@ -86,67 +98,64 @@ class ProfileViewController: UIViewController {
     
     func fetchData(completion: @escaping (Bool) -> ()) {
         let now = Date()
-//        let endAt = Calendar.current.date(byAdding: .day, value: 1, to: now)
+        //        let endAt = Calendar.current.date(byAdding: .day, value: 1, to: now)
         db.collection("posts")
             .whereField("uid", isEqualTo: userID!)
             .whereField("endAt", isGreaterThan: now)
             .order(by: "endAt", descending: true)
             .addSnapshotListener { snapshot, error in
-            if let e = error {
-                print("ERROR: \(e.localizedDescription)")
-            } else {
-                var likes = 0
-                var posts = 0
-                self.postsArray.removeAll()
-                if let snapshotDoc = snapshot?.documents {
-                    for document in snapshotDoc {
-                    
-                    let post = iThoughtPost()
-                    
-                    posts+=1
-                    
-                    post.postID = document.documentID
-                    post.anonymous = document.data()["anonymous"] as? Bool
-                    post.createdAt = document.data()["createdAt"] as? Timestamp
-                    post.disableReplies = document.data()["disableReplies"] as? Bool
-                    post.likes = document.data()["likes"] as? Int
-                    post.picture = document.data()["picture"] as? String
-                    post.senstive = document.data()["sensitive"] as? Bool
-                    post.text = document.data()["text"] as? String
-                    post.userID = document.data()["uid"] as? String
-                    post.username = document.data()["username"] as? String
-                    
-                    likes += post.likes!
-                    self.postsArray.append(post)
+                if let e = error {
+                    print("ERROR: \(e.localizedDescription)")
+                } else {
+                    var likes = 0
+                    var posts = 0
+                    self.postsArray.removeAll()
+                    if let snapshotDoc = snapshot?.documents {
+                        for document in snapshotDoc {
+                            
+                            let post = iThoughtPost()
+                            
+                            posts+=1
+                            
+                            post.postID = document.documentID
+                            post.anonymous = document.data()["anonymous"] as? Bool
+                            post.createdAt = document.data()["createdAt"] as? Timestamp
+                            post.disableReplies = document.data()["disableReplies"] as? Bool
+                            post.likes = document.data()["likes"] as? Int
+                            post.picture = document.data()["picture"] as? String
+                            post.senstive = document.data()["sensitive"] as? Bool
+                            post.text = document.data()["text"] as? String
+                            post.userID = document.data()["uid"] as? String
+                            post.username = document.data()["username"] as? String
+                            
+                            likes += post.likes!
+                            self.postsArray.append(post)
+                        }
+                    }
+                    self.likesLabel.text = "\(likes)"
+                    self.postsLabel.text = "\(posts)"
                 }
-                }
-                self.likesLabel.text = "\(likes)"
-                self.postsLabel.text = "\(posts)"
+                completion(true)
             }
-            completion(true)
-        }
     }
     
     func setupView() {
         view.backgroundColor = K.bColor
-//        view.backgroundColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
-        
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "gearshape.fill"), style: .plain, target: self, action: #selector(settings))
         navigationItem.rightBarButtonItem?.tintColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
-
     }
     
     func setConstraints() {
         NSLayoutConstraint.activate([
-//            profileImg.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
-//            profileImg.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+            //            profileImg.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
+            //            profileImg.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
             profileImg.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
             profileImg.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             profileImg.widthAnchor.constraint(equalToConstant: 150),
             profileImg.heightAnchor.constraint(equalTo: profileImg.widthAnchor, multiplier: 1/1.3333),
             
-//            usernameLabel.leadingAnchor.constraint(equalTo: profileImg.trailingAnchor, constant: 10),
-//            usernameLabel.topAnchor.constraint(equalTo: profileImg.topAnchor),
+            //            usernameLabel.leadingAnchor.constraint(equalTo: profileImg.trailingAnchor, constant: 10),
+            //            usernameLabel.topAnchor.constraint(equalTo: profileImg.topAnchor),
             usernameLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             usernameLabel.topAnchor.constraint(equalTo: profileImg.bottomAnchor, constant: 15),
             
@@ -190,35 +199,34 @@ class ProfileViewController: UIViewController {
         userPostsTableView.translatesAutoresizingMaskIntoConstraints = false
     }
     
-        let waitingAlert = UIAlertController(title: nil, message: "Loading...", preferredStyle: .alert)
-        func loadLoadingAlert() {
-            let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
-            loadingIndicator.hidesWhenStopped = true
-            loadingIndicator.style = UIActivityIndicatorView.Style.medium
-            loadingIndicator.startAnimating();
+    let waitingAlert = UIAlertController(title: nil, message: "Loading...", preferredStyle: .alert)
+    func loadLoadingAlert() {
+        let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.style = UIActivityIndicatorView.Style.medium
+        loadingIndicator.startAnimating();
+        
+        waitingAlert.view.addSubview(loadingIndicator)
+        present(waitingAlert, animated: true, completion: nil)
+    }
     
-            waitingAlert.view.addSubview(loadingIndicator)
-            present(waitingAlert, animated: true, completion: nil)
-        }
-
     
     func configImg() {
-        profileImg.image = UIImage(named: defaults.string(forKey: "picture") ?? "loading")
+//        profileImg.image = UIImage(named: picture ?? "loading")
         profileImg.contentMode = .scaleAspectFit
-        
     }
     
     func configLabels() {
-        usernameLabel.text = defaults.string(forKey: "username")
+//        usernameLabel.text = username ?? "Error"
         usernameLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         
-        bioLabel.text = defaults.string(forKey: "bio")
+//        bioLabel.text = bio ?? "Error"
         bioLabel.textColor = .systemGray
         bioLabel.numberOfLines = 0
         bioLabel.textAlignment = .center
         
-        likesLabel.text = "\(defaults.integer(forKey: "overall_likes"))"
-        postsLabel.text = "\(defaults.integer(forKey: "overall_posts"))"
+//        likesLabel.text = "\(overallLikes ?? 0)"
+//        postsLabel.text = "\(overallPosts ?? 0)"
         
         activePostsLabel.font = UIFont.systemFont(ofSize: 30, weight: .bold)
         activePostsLabel.text = "Active Posts"
@@ -229,36 +237,32 @@ class ProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         configImg()
         configLabels()
-        fetchData { _ in
-            self.userPostsTableView.reloadData()
-        }
-        userPostsTableView.reloadData()
     }
     
-    func printStuff() {
-        username = defaults.string(forKey: "username")
-        picture = defaults.string(forKey: "picture")
-        bio = defaults.string(forKey: "bio")
-        overallPosts = defaults.integer(forKey: "overall_posts")
-        overallLikes = defaults.integer(forKey: "overall_likes")
-        
-        print("username: \(username ?? "Error")")
-        print("picture: \(picture ?? "Error")")
-        print("bio: \(bio ?? "Error")")
-        print("Overall Posts: \(overallPosts ?? -1)")
-        print("Overall Likes: \(overallLikes ?? -1)")
-        
-        configImg()
-        configLabels()
-//        waitingAlert.dismiss(animated: true, completion: nil)
-    }
+//    func printStuff() {
+//        username = defaults.string(forKey: "username")
+//        picture = defaults.string(forKey: "picture")
+//        bio = defaults.string(forKey: "bio")
+//        overallPosts = defaults.integer(forKey: "overall_posts")
+//        overallLikes = defaults.integer(forKey: "overall_likes")
+//
+//        print("username: \(username ?? "Error")")
+//        print("picture: \(picture ?? "Error")")
+//        print("bio: \(bio ?? "Error")")
+//        print("Overall Posts: \(overallPosts ?? -1)")
+//        print("Overall Likes: \(overallLikes ?? -1)")
+//
+//        configImg()
+//        configLabels()
+//        //        waitingAlert.dismiss(animated: true, completion: nil)
+//    }
     
     @objc func settings() {
-//        navigationController?.pushViewController(SettingsViewController(), animated: true)
+        //        navigationController?.pushViewController(SettingsViewController(), animated: true)
         let settingsNC = UINavigationController(rootViewController: SettingsViewController())
         present(settingsNC, animated: true)
     }
-
+    
 }
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
@@ -270,9 +274,9 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: iThoughtPostsCell.id, for: indexPath) as! iThoughtPostsCell
-                
+        
         let posts = postsArray[indexPath.row]
-        cell.usernameLabel.text = (posts.anonymous! ? "Anonymous Post" : posts.username)
+        cell.usernameLabel.setTitle((posts.anonymous! ? "Anonymous Post" : posts.username), for: .normal)
         cell.userID             = posts.userID
         cell.postID             = posts.postID
         cell.sensitive.isHidden = !(posts.senstive!)
@@ -303,7 +307,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
         }
         
-        cell.userImage.image    = UIImage(named: (posts.anonymous! ? "anonymous" : posts.picture ?? "loading") )
+        cell.userImage.setImage(UIImage(named: (posts.anonymous! ? "anonymous" : posts.picture ?? "loading") ), for: .normal) 
         cell.postLabel.text     = posts.text
         
         cell.commentButton.isHidden = (posts.disableReplies!)

@@ -11,7 +11,7 @@ import FirebaseDatabase
 
 class CompleteProfileViewController: UIViewController {
     
-    let database = Database.database().reference()
+//    let database = Database.database().reference()
     let userId = Auth.auth().currentUser?.uid
     
     
@@ -64,22 +64,14 @@ class CompleteProfileViewController: UIViewController {
         bioTextView.translatesAutoresizingMaskIntoConstraints = false
     }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//
-//        database.child("Users").child(userId!).child("picture").observeSingleEvent(of: .value) { snapshot in
-//            if let pic = snapshot.value as? String {
-//                self.imageIconButton.setImage(UIImage(named: pic), for: .normal)
-//            }
-//        }
-//    }
-    
     func configureButtons() {
         // imageIconButton Configurations
         imageIconButton.addTarget(self, action: #selector(imageIconButtonTapped), for: .touchUpInside)
-        database.child("Users").child(userId!).child("picture").observeSingleEvent(of: .value) { snapshot in
-            if let pic = snapshot.value as? String {
-                self.imageIconButton.setImage(UIImage(named: pic), for: .normal)
+        DatabaseManager.shared.db.collection("users").document(userId!).addSnapshotListener { snap, error in
+            if let snap = snap {
+                if let pic = snap.get("picture") as? String {
+                    self.imageIconButton.setImage(UIImage(named: pic), for: .normal)
+                }
             }
         }
         
@@ -94,13 +86,7 @@ class CompleteProfileViewController: UIViewController {
         vc.modalPresentationStyle = .fullScreen
         vc.img.image = imageIconButton.image(for: .normal) ?? UIImage(named: "male_01")
         
-        present(UINavigationController(rootViewController: vc), animated: true) { [self] in
-            database.child("Users").child(userId!).child("picture").observe(.value) { snapshot in
-                if let pic = snapshot.value as? String {
-                    self.imageIconButton.setImage(UIImage(named: pic), for: .normal)
-                }
-            }
-        }
+        present(UINavigationController(rootViewController: vc), animated: true)
     }
     
     @objc func finishProfile() {
@@ -108,7 +94,8 @@ class CompleteProfileViewController: UIViewController {
         if bio == "Enter your bio..." {
             bio = ""
         }
-        database.child("Users").child(userId!).child("bio").setValue(bio)
+//        database.child("Users").child(userId!).child("bio").setValue(bio)
+        DatabaseManager.shared.db.collection("users").document(userId!).updateData(["bio": bio])
         
         (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.setRootViewController(HNPViewController())
     }

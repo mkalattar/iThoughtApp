@@ -17,16 +17,15 @@ class HomeViewController: UIViewController {
     let db = Firestore.firestore()
     
     let regionCode = Locale.current.regionCode
-    let defaults   = UserDefaults.standard
     
     let notFoundImage = UIImageView(image: UIImage(named: "no_posts"))
     let notFoundLabel = UILabel()
     
     let options = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet) // Delete later
-    let loadingAlert = UIAlertController(title: nil, message: "Loading", preferredStyle: .alert)
+    let loadingAlert = UIAlertController(title: nil, message: "Loading...", preferredStyle: .alert)
     
     var postsArray = [iThoughtPost]()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -36,9 +35,8 @@ class HomeViewController: UIViewController {
         postsTableView.backgroundColor = .clear
         postsTableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         
-        fetchData { _ in
-            self.loadingAlert.dismiss(animated: true, completion: nil)
-        }
+        
+        getCurrentUserData()
         configureTableView()
         setConstraints()
         configNotFoundViews()
@@ -50,8 +48,40 @@ class HomeViewController: UIViewController {
         loadingIndicator.hidesWhenStopped = true
         loadingIndicator.style = UIActivityIndicatorView.Style.medium
         loadingIndicator.startAnimating();
-
+        
         loadingAlert.view.addSubview(loadingIndicator)
+    }
+    
+    var currentUsername:String?
+    var currentImage:String?
+    func getCurrentUserData() {
+        db.collection("users").document(Auth.auth().currentUser!.uid).addSnapshotListener { snapshot, error in
+            if let e = error {
+                print(e.localizedDescription)
+            } else {
+                if let snap = snapshot {
+                    self.currentUsername = snap.get("username") as? String
+                    self.currentImage = snap.get("picture") as? String
+                }
+            }
+        }
+    }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        fetchData { _ in
+            self.loadingAlert.dismiss(animated: true, completion: nil)
+        }
+        
+        
+        print("I HAVE BEEN SUMMONED")
+        Auth.auth().addStateDidChangeListener { auth, user in
+            if user == nil {
+                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.setRootViewController(UINavigationController(rootViewController: WelcomeViewController()))
+            }
+        }
     }
     
     func configNotFoundViews() {
@@ -86,33 +116,12 @@ class HomeViewController: UIViewController {
         postsTableView.allowsSelection = false
         postsTableView.rowHeight = UITableView.automaticDimension
         postsTableView.estimatedRowHeight = 200
-
+        
         
         postsTableView.delegate   = self
         postsTableView.dataSource = self
     }
     
-//    func loadMessages() {
-//        db.collection(K.FStore.collectionName).order(by: K.FStore.dateField).addSnapshotListener { (querySnapshot, error) in
-//            self.messages = []
-//            if let e = error {
-//                print(e)
-//            } else {
-//                if let snapshotDocument = querySnapshot?.documents {
-//                    for doc in snapshotDocument {
-//                        let data            = doc.data()
-//                        if let sender       = data[K.FStore.senderField] as? String, let messageBody = data[K.FStore.bodyField] as? String {
-//                            let newMessage  = Message(sender: sender, body: messageBody)
-//                            self.messages.append(newMessage)
-//                            DispatchQueue.main.async {
-//                                self.tableView.reloadData()
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
     func fetchData(completion: @escaping (Bool) -> ()) {
         present(loadingAlert, animated: true, completion: nil)
         let now = Date()
@@ -120,6 +129,7 @@ class HomeViewController: UIViewController {
             .order(by: "endAt", descending: true)
             .whereField("region", isEqualTo: regionCode!)
             .whereField("endAt", isGreaterThan: now)
+            .whereField("sensitive", in: [!UserDefaults.standard.bool(forKey: "disableSensitive"), false] )
             .addSnapshotListener { snapshot, error in
                 if let e = error {
                     print("ERROR: \(e.localizedDescription)")
@@ -159,33 +169,6 @@ class HomeViewController: UIViewController {
                 }
                 completion(true)
             }
-//        tableView.reloadData()
-        
-//        .getDocuments() { (querySnapshot, err) in
-//            if let err = err {
-//                print("Error getting documents: \(err)")
-//            } else {
-//                for document in querySnapshot!.documents {
-//                    print("\(document.documentID) => \(document.data())")
-//
-//                    let post = iThoughtPost()
-//
-//                    post.postID = document.documentID
-//                    post.anonymous = document.data()["anonymous"] as? Bool
-//                    post.createdAt = document.data()["createdAt"] as? Timestamp
-//                    post.disableReplies = document.data()["disableReplies"] as? Bool
-//                    post.likes = document.data()["likes"] as? Int
-//                    post.picture = document.data()["picture"] as? String
-//                    post.senstive = document.data()["sensitive"] as? Bool
-//                    post.text = document.data()["text"] as? String
-//                    post.userID = document.data()["uid"] as? String
-//                    post.username = document.data()["username"] as? String
-//
-//                    self.postsArray.append(post)
-//                }
-//            }
-//            completion(true)
-//        }
     }
     
     func setConstraints() {
@@ -220,10 +203,14 @@ class HomeViewController: UIViewController {
     }
     
     @objc func composePost() {
-        let nav = UINavigationController(rootViewController: ComposePostViewController())
+        let vc = ComposePostViewController()
+        
+        vc.currentImage = currentImage
+        vc.currentUsername = currentUsername
+        
+        let nav = UINavigationController(rootViewController: vc)
         present(nav, animated: true)
     }
-
 }
 
 
@@ -234,9 +221,9 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: iThoughtPostsCell.id, for: indexPath) as! iThoughtPostsCell
-                
+        
         let posts = postsArray[indexPath.row]
-        cell.usernameLabel.text = (posts.anonymous! ? "Anonymous Post" : posts.username)
+        cell.usernameLabel.setTitle((posts.anonymous! ? "Anonymous Post" : posts.username), for: .normal)
         cell.userID             = posts.userID
         cell.postID             = posts.postID
         cell.sensitive.isHidden = !(posts.senstive!)
@@ -254,26 +241,24 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         
         cell.timeLabel.text = "\(hourString):\(minuteString)"
         cell.likeButton.setTitle(" \(posts.likes ?? 0)", for: .normal)
+        cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+//        let likedPosts = self.defaults.stringArray(forKey: "likedPosts")
+//
+//        if let liked = likedPosts {
+//            if liked.contains(posts.postID!) {
+//                cell.likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+//            } else {
+//                cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+//            }
+//        } else {
+//            cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
+//        }
         
-        let likedPosts = self.defaults.stringArray(forKey: "likedPosts")
-        
-        if let liked = likedPosts {
-            if liked.contains(posts.postID!) {
-                cell.likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-            } else {
-                cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
-            }
-        } else {
-            cell.likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
-        }
-        
-        cell.userImage.image    = UIImage(named: (posts.anonymous! ? "anonymous" : posts.picture ?? "loading") )
+        cell.userImage.setImage(UIImage(named: (posts.anonymous! ? "anonymous" : posts.picture ?? "loading") ), for: .normal)
         cell.postLabel.text     = posts.text
         
         cell.commentButton.isHidden = (posts.disableReplies!)
         
-        let reportPost = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let deletePost = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         let reportPost14 = UIAction(title: "Report Post", image: UIImage(systemName: "exclamationmark.bubble.fill")) { action in
             let docData: [String: Any] = [
@@ -291,65 +276,50 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         let deletePostArray = [deletePost14]
         
         
-        if #available(iOS 14.0, *) {
-            cell.moreButton.showsMenuAsPrimaryAction = true
-            if Auth.auth().currentUser?.uid == posts.userID {
-                cell.moreButton.menu = UIMenu(title: "", children: deletePostArray)
-            } else {
-                cell.moreButton.menu = UIMenu(title: "", children: reportPostArray)
-            }
+        
+        cell.moreButton.showsMenuAsPrimaryAction = true
+        if Auth.auth().currentUser?.uid == posts.userID {
+            cell.moreButton.menu = UIMenu(title: "", children: deletePostArray)
         } else {
-            cell.moreButtonTappedCallBack = {
-                if Auth.auth().currentUser?.uid == posts.userID {
-                    self.present(deletePost, animated: true, completion: nil)
-                } else {
-                    self.present(reportPost, animated: true, completion: nil)
-                }
-            }
+            cell.moreButton.menu = UIMenu(title: "", children: reportPostArray)
+        }
+        
+        cell.profileTappedCallBack = {
+            if posts.anonymous! { return }
+
+            let profileVC = OtherUserProfileViewController()
+            profileVC.userID = posts.userID
+            profileVC.title = "\(posts.username!)'s Profile"
+            let nav = UINavigationController(rootViewController: profileVC)
+            self.present(nav, animated: true, completion: nil)
+            print("I have been tapped")
         }
         
         
-        reportPost.addAction(UIAlertAction(title: "Report Post", style: .destructive, handler: { ACTION in
-            let docData: [String: Any] = [
-                "reported_postID":      posts.postID  ?? "null",
-                "reported_post_text":   posts.text    ?? "null",
-                "reported_userID":      posts.userID  ?? "null",
-                "reporter_userID":      Auth.auth().currentUser?.uid ?? "null"
-            ]
-            self.db.collection("reports").addDocument(data: docData)
-        }))
-        reportPost.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { ACTION in
-            self.dismiss(animated: true, completion: nil)
-        }))
+//        cell.likeButtonTappedCallBack = {
+//            
+//            var likedPosts = self.defaults.stringArray(forKey: "likedPosts")
+//            
+//            if let liked = likedPosts {
+//                if liked.contains(posts.postID!) {
+//                    return
+//                }
+//            }
+//            
+//            let postsRef = self.db.collection("posts").document(posts.postID!)
+//            postsRef.updateData(["likes": FieldValue.increment(Int64(1))])
+//            cell.likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+//            cell.likeButton.setTitle(" \(posts.likes ?? 0)", for: .normal)
+//            likedPosts?.append(posts.postID!)
+//            self.defaults.setValue(likedPosts, forKey:"likedPosts")
+//        }
         
-        deletePost.addAction(UIAlertAction(title: "Delete your post?", style: .destructive, handler: { ACTION in
-            self.db.collection("posts").document(posts.postID!).delete()
-        }))
-        deletePost.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { UIAlertAction in
-            self.dismiss(animated: true, completion: nil)
-        }))
-        
-        
-        
-        cell.likeButtonTappedCallBack = {
-            
-            var likedPosts = self.defaults.stringArray(forKey: "likedPosts")
-            
-            if let liked = likedPosts {
-                if liked.contains(posts.postID!) {
-                    return
-                }
-            }
-            
-            let postsRef = self.db.collection("posts").document(posts.postID!)
-            postsRef.updateData(["likes": FieldValue.increment(Int64(1))])
-            cell.likeButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-            cell.likeButton.setTitle(" \(posts.likes ?? 0)", for: .normal)
-            likedPosts?.append(posts.postID!)
-            self.defaults.setValue(likedPosts, forKey:"likedPosts")
-        }
         return cell
-    } 
+    }
+    
+    @objc func closeProfile() {
+        
+    }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
@@ -393,6 +363,17 @@ extension HomeViewController {
         }
     }
     
+    func signout() {
+        let firebaseAuth = Auth.auth()
+        do {
+            try firebaseAuth.signOut()
+        } catch let signOutError as NSError {
+            print("Error signing out: %@", signOutError)
+        }
+        
+        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.setRootViewController(UINavigationController(rootViewController: WelcomeViewController()))
+    }
+    
     func configOptionsButton() {
         let deleteAllPosts = UIAction(title: "Delete All Posts", image: UIImage(systemName: "trash.fill"), attributes: .destructive) { action in
             self.deleteAllPosts()
@@ -400,30 +381,17 @@ extension HomeViewController {
         let deleteOldPosts = UIAction(title: "Delete Posts Over 24H", image: UIImage(systemName: "trash.fill"), attributes: .destructive) { action in
             self.deleteOldPosts()
         }
-        
-        let actions = [deleteAllPosts, deleteOldPosts]
-        
-        if #available(iOS 14.0, *) {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Debug options", image: nil, primaryAction: nil, menu:  UIMenu(title: "", children: actions))
-        } else {
-            // Fallback on earlier versions
-            navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Debug Options", style: .plain, target: self, action: #selector(optionsTapped))
+        let signOut = UIAction(title: "Sign Out", image: UIImage(systemName: "figure.walk"), attributes: .destructive) { action in
+            self.signout()
         }
-        navigationItem.leftBarButtonItem?.tintColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
-    
         
-        options.addAction(UIAlertAction(title: "Delete Posts Over 24H", style: .destructive, handler: { ACTION in
-            self.deleteOldPosts()
-        }))
-        options.addAction(UIAlertAction(title: "Delete all posts", style: .destructive, handler: { ACTION in
-            self.deleteAllPosts()
-        }))
-        options.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: { ACTION in
-            self.options.dismiss(animated: true, completion: nil)
-        }))
-    }
-    
-    @objc func optionsTapped() {
-        present(options, animated: true)
+        let actions = [deleteAllPosts, deleteOldPosts, signOut]
+        
+        
+     
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Debug options", image: nil, primaryAction: nil, menu:  UIMenu(title: "", children: actions))
+        
+        navigationItem.leftBarButtonItem?.tintColor = UIColor(red: 216/255, green: 207/255, blue: 234/255, alpha: 1)
+        
     }
 }

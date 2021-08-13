@@ -21,19 +21,21 @@ class iThoughtPostsCell: UITableViewCell {
     var postID: String?
     var userID: String?
     var isSensitive: Bool?
+
     
     var cellDelegate: TableViewButtonClicked?
     var index: IndexPath?
     
     var likeButtonTappedCallBack: () -> ()  = { }
     var moreButtonTappedCallBack: () -> ()  = { }
+    var profileTappedCallBack: () -> () = {}
     
     let db = Firestore.firestore()
     
     let postView = UIView()
     
-    let userImage = UIImageView()
-    let usernameLabel = UILabel()
+    let userImage = UIButton()
+    let usernameLabel = UIButton()
     let timeLabel = UILabel()
     let moreButton = UIButton()
     let postLabel = UITextView()
@@ -72,6 +74,7 @@ class iThoughtPostsCell: UITableViewCell {
     
     func configureView() {
         addSubview(postView)
+        postView.isUserInteractionEnabled = true
         postView.backgroundColor = UIColor(red: 54/255, green: 47/255, blue: 61/255, alpha: 1)
         postView.layer.cornerRadius = 17
     }
@@ -102,13 +105,16 @@ class iThoughtPostsCell: UITableViewCell {
     }
     func configureLabels() {
         // usernameLabel
+//        usernameLabel.isUserInteractionEnabled = true
         postView.addSubview(usernameLabel)
 //        if posts.anonymous ?? false {
 //            usernameLabel.text = "Anonymous user"
 //        } else {
 //            usernameLabel.text = posts.username
 //        }
-        usernameLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        usernameLabel.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        usernameLabel.addTarget(self, action: #selector(profileTapped), for: .touchUpInside)
+//        usernameLabel.addGestureRecognizer(tap)
         
         // postLabel
         postView.addSubview(postLabel)
@@ -119,6 +125,7 @@ class iThoughtPostsCell: UITableViewCell {
         postLabel.dataDetectorTypes = UIDataDetectorTypes.link
         postLabel.isScrollEnabled = false
         postLabel.backgroundColor = .clear
+        postLabel.tintColor = .cyan
         
         
         postView.addSubview(timeLabel)
@@ -140,6 +147,7 @@ class iThoughtPostsCell: UITableViewCell {
     
     func configureImage() {
         postView.addSubview(userImage)
+        userImage.addTarget(self, action: #selector(profileTapped), for: .touchUpInside)
     }
     
     func setConstraints() {
@@ -154,7 +162,7 @@ class iThoughtPostsCell: UITableViewCell {
             userImage.widthAnchor.constraint(equalToConstant: 75),
             userImage.heightAnchor.constraint(equalTo: userImage.widthAnchor, multiplier: 1/1.33333),
             
-            usernameLabel.topAnchor.constraint(equalTo: userImage.topAnchor, constant: 7),
+            usernameLabel.topAnchor.constraint(equalTo: userImage.topAnchor),
             usernameLabel.leadingAnchor.constraint(equalTo: userImage.trailingAnchor, constant: 10),
             
             sensitive.leadingAnchor.constraint(equalTo: usernameLabel.trailingAnchor, constant: 10),
@@ -199,6 +207,9 @@ class iThoughtPostsCell: UITableViewCell {
     }
     @objc func moreTapped() {
         moreButtonTappedCallBack()
+    }
+    @objc func profileTapped() {
+        profileTappedCallBack()
     }
     
 }

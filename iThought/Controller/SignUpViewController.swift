@@ -105,7 +105,7 @@ class SignUpViewController: UIViewController {
                 return
             }
             
-            DatabaseManager.shared.insertUser(user: iThoughtUser(bio: "", overallLikes: 0, overallPosts: 0, picture: "male_01", username: self.newUsernameTextField.getText().lowercased()), id: DatabaseManager.shared.userID!)
+            DatabaseManager.shared.insertUser(user: iThoughtUser(bio: "", overallLikes: 0, overallPosts: 0, picture: "male_01", username: self.newUsernameTextField.getText().lowercased()), id: Auth.auth().currentUser!.uid)
             
             
             let alert = UIAlertController(title: "You signed up Successfully!", message: "Now let's complete your profile", preferredStyle: .alert)

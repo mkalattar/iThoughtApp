@@ -11,42 +11,39 @@ import FirebaseAuth
 
 class HNPViewController: UITabBarController {
     
-
-    let database = Database.database().reference()
+    
     let userID = Auth.auth().currentUser?.uid
     let currentUsr = iThoughtUser()
-    let defaults = UserDefaults.standard
     
     let profilevc = ProfileViewController()
     let composeVC = ComposePostViewController()
     
     override func viewDidLoad() {
-        super.viewDidLoad()
+        super.viewDidLoad()        
+        //        database.child("Users").child(userID!).observe(.value) { snapshot in
+        //            guard let userDic = snapshot.value as? [String: Any] else { return }
+        //
+        //            self.currentUsr.username = userDic["username"] as? String
+        //            self.currentUsr.bio = userDic["bio"] as? String
+        //            self.currentUsr.overallLikes = userDic["overall_likes"] as? Int
+        //            self.currentUsr.overallPosts = userDic["overall_posts"] as? Int
+        //            self.currentUsr.picture = userDic["picture"] as? String
+        //
+        //            self.defaults.setValue(self.currentUsr.username, forKey: "username")
+        //            self.defaults.setValue(self.currentUsr.picture, forKey: "picture")
+        //            self.defaults.setValue(self.currentUsr.bio, forKey: "bio")
+        //            self.defaults.setValue(self.currentUsr.overallPosts, forKey: "overall_posts")
+        //            self.defaults.setValue(self.currentUsr.overallLikes, forKey: "overall_likes")
+        //
+        //            self.composeVC.configImages()
+        //            self.composeVC.configLabel()
+        //            self.profilevc.printStuff()
+        //
+        //        }
+        
         self.viewControllers = [createHomeNC(), createNotifNC(), createBookmarksNC(), createProfileNC()]
         
-        database.child("Users").child(userID!).observe(.value) { snapshot in
-            guard let userDic = snapshot.value as? [String: Any] else { return }
-            
-            self.currentUsr.username = userDic["username"] as? String
-            self.currentUsr.bio = userDic["bio"] as? String
-            self.currentUsr.overallLikes = userDic["overall_likes"] as? Int
-            self.currentUsr.overallPosts = userDic["overall_posts"] as? Int
-            self.currentUsr.picture = userDic["picture"] as? String
-            
-            self.defaults.setValue(self.currentUsr.username, forKey: "username")
-            self.defaults.setValue(self.currentUsr.picture, forKey: "picture")
-            self.defaults.setValue(self.currentUsr.bio, forKey: "bio")
-            self.defaults.setValue(self.currentUsr.overallPosts, forKey: "overall_posts")
-            self.defaults.setValue(self.currentUsr.overallLikes, forKey: "overall_likes")
-            
-            self.composeVC.configImages()
-            self.composeVC.configLabel()
-            self.profilevc.printStuff()
-            
-        }
-        
     }
-    
     
     func createHomeNC() -> UINavigationController {
         let homeVC = HomeViewController()
@@ -82,20 +79,7 @@ class HNPViewController: UITabBarController {
         let profileVC = ProfileViewController()
         profileVC.title = "Profile"
         
-//        database.child("Users").child(userID!).observe(.value) { snapshot in
-//            
-//            guard let userDic = snapshot.value as? [String: Any] else { return }
-//            
-//            profileVC.username = userDic["username"] as? String
-//            profileVC.bio = userDic["bio"] as? String
-//            profileVC.overallLikes = userDic["overall_likes"] as? Int
-//            profileVC.overallPosts = userDic["overall_posts"] as? Int
-//            profileVC.picture = userDic["picture"] as? String
-//            
-//            profileVC.printStuff()
-//        }
-        
-//        profileVC.waitingAlert.dismiss(animated: true, completion: nil)
+        profileVC.userID = self.userID!
         
         let imageIcon = UIImage(systemName: "person")
         let selectedImageIcon = UIImage(systemName: "person.fill")
@@ -118,5 +102,5 @@ class HNPViewController: UITabBarController {
         
         return UINavigationController(rootViewController: bookmarksVC)
     }
-
+    
 }

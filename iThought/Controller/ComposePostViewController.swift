@@ -14,13 +14,13 @@ class ComposePostViewController: UIViewController {
 
     let database = Database.database().reference()
     let userID = Auth.auth().currentUser?.uid
-    let defaults = UserDefaults.standard
     let db = Firestore.firestore()
     let alert = UIAlertController(title: "Please make sure to write something before posting", message: nil, preferredStyle: .alert)
 
     let optionsTableView = UITableView()
     
-//    var currentUsr = iThoughtUser()
+    var currentUsername: String?
+    var currentImage: String?
     
     let userImageView = UIImageView()
     
@@ -71,7 +71,7 @@ class ComposePostViewController: UIViewController {
     
     @objc func postTapped() {
         
-        if textView.text == "Write something..." && textView.textColor === UIColor.systemGray {
+        if (textView.text == "Write something..." && textView.textColor === UIColor.systemGray) || textView.text == "" {
             present(alert, animated: true, completion: nil)
             return
         }
@@ -79,7 +79,6 @@ class ComposePostViewController: UIViewController {
         let today = Date()
         let endAt = Calendar.current.date(byAdding: .day, value: 1, to: today)
         
-        // Add a new document in collection "cities"
         db.collection("posts").document().setData([
             "text": textView.text!,
             "likes": 0,
@@ -87,11 +86,11 @@ class ComposePostViewController: UIViewController {
             "createdAt": Date(),
             "disableReplies": disableReplies,
             "endAt": endAt!,
-            "picture": defaults.string(forKey: "picture")!,
+            "picture": currentImage!,
             "region": Locale.current.regionCode!,
             "sensitive": senstive,
             "uid": userID!,
-            "username": defaults.string(forKey: "username")!
+            "username": currentUsername!
         ]) { err in
             if let err = err {
                 print("Error writing document: \(err)")
@@ -126,7 +125,7 @@ class ComposePostViewController: UIViewController {
     func configPostView() {
 //        54, 47, 61
         postView.backgroundColor = UIColor(red: 54/255, green: 47/255, blue: 61/255, alpha: 1)
-        postView.layer.cornerRadius = 27
+        postView.layer.cornerRadius = 20
         
         view.addSubview(postView)
         postView.addSubview(userImageView)
@@ -177,12 +176,12 @@ class ComposePostViewController: UIViewController {
     }
     
     func configImages() {
-        let pic = defaults.string(forKey: "picture")
+        let pic = currentImage
         userImageView.image = UIImage(named: pic ?? "loading")
     }
     
     func configLabel() {
-        let username = defaults.string(forKey: "username")
+        let username = currentUsername
         usernameLabel.text = username
         usernameLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         
@@ -238,8 +237,8 @@ class ComposePostViewController: UIViewController {
                 usernameLabel.text = "Anonymous post"
             } else {
                 anonymous = false
-                userImageView.image = UIImage(named: defaults.string(forKey: "picture") ?? "loading")
-                usernameLabel.text = defaults.string(forKey: "username")
+                userImageView.image = UIImage(named: currentImage ?? "loading")
+                usernameLabel.text = currentUsername
             }
         }
     }

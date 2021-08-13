@@ -106,7 +106,7 @@ extension iThoughtTextField: UITextFieldDelegate {
         
         if textField.hasText {
             UIView.animate(withDuration: 0.4) {
-                self.layer.borderColor = UIColor(red: 123/255, green: 87/255, blue: 206/255, alpha: 1).cgColor
+                self.layer.borderColor = K.sColor.cgColor
             }
         } else {
             UIView.animate(withDuration: 0.4) {
